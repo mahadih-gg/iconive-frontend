@@ -3,38 +3,9 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
+// DUMMY_DATA: static blog content — replace with CMS/API later
+import { blogContentDummy, blogTabsDummy } from "@/dummy/blogs.dummy";
 import { cn } from "@/utils/cn";
-
-const TABS = [
-  { id: 1, label: "Basic Guide" },
-  { id: 2, label: "Base & Hair Guide" },
-  { id: 3, label: "Wearing & Size Guide" },
-  { id: 4, label: "Hair Wave-Curl & Density Guide" },
-  { id: 5, label: "Color Guide" },
-] as const;
-
-const CONTENT: Record<number, { title: string; body: string }> = {
-  1: {
-    title: "Basic Guide",
-    body: "Learn the fundamentals of choosing and caring for your Iconive wig — from base types to daily maintenance tips.",
-  },
-  2: {
-    title: "Base & Hair Guide",
-    body: "Understand mono, lace, skin, silk, and mix bases, plus remy, virgin, and synthetic hair materials.",
-  },
-  3: {
-    title: "Wearing & Size Guide",
-    body: "Measure your head correctly and follow wearing instructions for comfort and a natural look.",
-  },
-  4: {
-    title: "Hair Wave-Curl & Density Guide",
-    body: "Explore wave, curl, and density options to match your preferred style and coverage.",
-  },
-  5: {
-    title: "Color Guide",
-    body: "Use our color families and shade guidance to pick the right tone for your look.",
-  },
-};
 
 export function BlogView() {
   const searchParams = useSearchParams();
@@ -45,12 +16,12 @@ export function BlogView() {
     if (show) setActive(Number(show));
   }, [searchParams]);
 
-  const article = CONTENT[active] ?? CONTENT[1];
+  const article = blogContentDummy[active] ?? blogContentDummy[1];
 
   return (
     <div className="w-full px-4 py-8">
       <div className="flex flex-col flex-wrap justify-center gap-3 px-2 pt-4 pb-2 md:flex-row md:gap-8">
-        {TABS.map((tab) => (
+        {blogTabsDummy.map((tab) => (
           <button
             key={tab.id}
             type="button"

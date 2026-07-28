@@ -44,15 +44,18 @@ export function CheckoutView() {
     () => (countryCode ? State.getStatesOfCountry(countryCode) : []),
     [countryCode],
   );
-  const cities = useMemo(
-    () =>
-      countryCode && stateCode
-        ? City.getCitiesOfState(countryCode, stateCode)
-        : countryCode
-          ? City.getCitiesOfCountry(countryCode)
-          : [],
-    [countryCode, stateCode],
-  );
+  const cities = useMemo(() => {
+    if (!countryCode) return [];
+
+    const countryCities = City.getCitiesOfCountry(countryCode) ?? [];
+
+    if (!stateCode) return countryCities;
+
+    const stateCities = City.getCitiesOfState(countryCode, stateCode);
+    if (stateCities.length > 0) return stateCities;
+
+    return countryCities.filter((city) => city.stateCode === stateCode);
+  }, [countryCode, stateCode]);
 
   const deliveryCharge =
     total > 250 * env.fxRate ? 0 : env.deliveryCharge * env.fxRate;
@@ -202,22 +205,30 @@ export function CheckoutView() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <Label>City</Label>
-              <Select
-                value={watch("city")}
-                onValueChange={(value) => setValue("city", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="City" />
-                </SelectTrigger>
-                <SelectContent>
-                  {cities.map((c) => (
-                    <SelectItem key={`${c.name}-${c.latitude}`} value={c.name}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label htmlFor="city">City</Label>
+              {cities.length > 0 ? (
+                <Select
+                  value={watch("city")}
+                  onValueChange={(value) => setValue("city", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="City" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cities.map((c) => (
+                      <SelectItem key={`${c.name}-${c.latitude}`} value={c.name}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input
+                  id="city"
+                  placeholder="Enter your city"
+                  {...register("city")}
+                />
+              )}
               {errors.city && (
                 <p className="text-xs text-destructive">{errors.city.message}</p>
               )}
