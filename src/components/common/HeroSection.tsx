@@ -77,7 +77,7 @@ export function HeroSection({
               Luxury wigs crafted with 100% human hair for a flawless, natural look.
             </p>
             <div className="mt-6 flex flex-wrap gap-3 sm:gap-4">
-              <Button variant="cta" size="cta" asChild>
+              <Button variant="cta" size="cta" iconMotion="right" asChild>
                 <Link href="/products">
                   Shop Collection
                   <ArrowRight />

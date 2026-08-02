@@ -106,6 +106,7 @@ export function ChooseYourStyle() {
                     <Button
                       variant={category.ctaVariant === "solid" ? "cta" : "ctaOutline"}
                       size="ctaSm"
+                      iconMotion="right"
                       asChild
                     >
                       <Link href={category.href}>

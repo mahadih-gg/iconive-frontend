@@ -8,13 +8,14 @@ import { ForWholesellers } from "@/components/common/ForWholesellers";
 import { HeroSection } from "@/components/common/HeroSection";
 import { ProductCard } from "@/components/common/ProductCard";
 import { SectionHeader } from "@/components/common/SectionHeader";
+import { SpecialCollection } from "@/components/common/SpecialCollection";
 import { TopSelling } from "@/components/common/TopSelling";
 import { WhyChooseUs } from "@/components/common/WhyChooseUs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
 
 export function HomeView() {
-  const { topSelling, trending, isLoading } = useFeaturedProducts();
+  const { topSelling, trending, offers, isLoading } = useFeaturedProducts();
 
   return (
     <div>
@@ -42,6 +43,10 @@ export function HomeView() {
       </section>
 
       <ForWholesellers />
+      <SpecialCollection
+        products={(offers.length > 0 ? offers : topSelling).slice(0, 8)}
+        isLoading={isLoading}
+      />
       <WhyChooseUs />
       <CustomerReviews />
 

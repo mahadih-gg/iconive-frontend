@@ -214,7 +214,7 @@ export function WhyChooseUs({
                 ))}
               </div>
 
-              <Button variant="cta" size="cta" className="mt-8" asChild>
+              <Button variant="cta" size="cta" iconMotion="right" className="mt-8" asChild>
                 <Link href="/products">
                   Explore Our Collection
                   <span data-slot="button-arrow" aria-hidden>
@@ -310,7 +310,7 @@ export function WhyChooseUs({
             <p className="font-heading mt-0.5 text-xl italic font-semibold tracking-tight text-white sm:text-2xl md:text-3xl">
               Hair Gallery
             </p>
-            <Button variant="ctaLight" size="ctaSm" className="mt-4" asChild>
+            <Button variant="ctaLight" size="ctaSm" iconMotion="right" className="mt-4" asChild>
               <Link href="/products">
                 View Gallery
                 <span data-slot="button-arrow" aria-hidden>

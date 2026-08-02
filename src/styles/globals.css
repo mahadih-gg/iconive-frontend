@@ -120,7 +120,7 @@
   }
 
   bottom {
-    @apply cursor-pointer;
+    cursor: pointer;
   }
 
   h1,

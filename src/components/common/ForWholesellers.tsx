@@ -211,7 +211,7 @@ export function ForWholesellers({
             }
             transition={{ duration: 0.55, delay: 0.55, ease: EASE }}
           >
-            <Button variant="cta" size="ctaSm" asChild>
+            <Button variant="cta" size="ctaSm" iconMotion="right" asChild>
               <Link href="/wholesale">
                 View Wholesale Shop
                 <span data-slot="button-arrow" aria-hidden>

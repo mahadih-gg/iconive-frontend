@@ -1,9 +1,10 @@
 "use client";
 
+import { Heart, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Heart, ShoppingBag, Star } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -11,22 +12,36 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import { useCurrency } from "@/hooks/useCurrency";
 import { useWishlist } from "@/hooks/useWishlist";
-import type { Product } from "@/types/product.type";
 import { cn } from "@/lib/utils";
+import type { Product } from "@/types/product.type";
+
+const COLOR_SWATCHES = [
+  "/Image/Black/1jetblack.webp",
+  "/Image/Brown/2 DARKEST BROWN.webp",
+  "/Image/Blonde/613 PLATINUM BLONDE.webp",
+  "/Image/Brown/4 medium brown.webp",
+  "/Image/Blonde/22 BLONDE.webp",
+  "/Image/Black/1C cool black.webp",
+] as const;
 
 interface ProductCardProps {
   product: Product;
   className?: string;
 }
 
-function getProductMeta(product: Product) {
-  const sold = Number(product.sold ?? 0);
-  const rating = Number(product.rating ?? 4.7 + Math.min(sold, 50) / 250);
-  const reviews = Number(product.reviews ?? Math.max(sold * 3, 48));
-  return {
-    rating: Math.min(5, Math.round(rating * 10) / 10),
-    reviews,
-  };
+function getVariants(productId: string, productImage: string) {
+  let hash = 0;
+  for (let i = 0; i < productId.length; i++) {
+    hash = (hash + productId.charCodeAt(i) * (i + 1)) % COLOR_SWATCHES.length;
+  }
+
+  const extras = [
+    COLOR_SWATCHES[hash],
+    COLOR_SWATCHES[(hash + 2) % COLOR_SWATCHES.length],
+    COLOR_SWATCHES[(hash + 4) % COLOR_SWATCHES.length],
+  ].filter((src) => src !== productImage);
+
+  return [productImage, ...extras].slice(0, 3);
 }
 
 export function ProductCard({ product, className }: ProductCardProps) {
@@ -36,19 +51,24 @@ export function ProductCard({ product, className }: ProductCardProps) {
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const inWishlist = isInWishlist?.(product._id) ?? false;
+  const [activeSwatch, setActiveSwatch] = useState(0);
 
-  const image =
+  const productImage = String(
     product.photo ??
     product.image ??
     (Array.isArray(product.images) ? product.images[0] : undefined) ??
-    "/Image/logo/logo.png";
+    "/Image/logo/logo.png"
+  );
+  const variants = getVariants(product._id, productImage);
+  const image = variants[activeSwatch] ?? productImage;
 
   const price = Number(product.price ?? 0);
   const discount = Number(product.discount ?? 0);
   const finalPrice = discount > 0 ? price - (price * discount) / 100 : price;
-  const { rating, reviews } = getProductMeta(product);
 
-  function handleWishlist() {
+  function handleWishlist(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
     if (!isAuthenticated) {
       toast.error("Please sign in to save favorites");
       router.push("/login");
@@ -58,7 +78,9 @@ export function ProductCard({ product, className }: ProductCardProps) {
     else addToWishlist(product._id);
   }
 
-  function handleAddToCart() {
+  function handleAddToCart(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
     addToCart({
       product: product._id,
       name: product.name,
@@ -71,24 +93,29 @@ export function ProductCard({ product, className }: ProductCardProps) {
   return (
     <article
       className={cn(
-        "group flex flex-col overflow-hidden rounded-xl bg-white shadow-[0_2px_16px_rgba(23,23,23,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_28px_rgba(23,23,23,0.1)]",
+        "group relative flex flex-col overflow-hidden border border-primary-dark/20 bg-white transition-colors duration-300 hover:border-primary-dark",
         className
       )}
     >
-      <div className="relative aspect-4/5 w-full overflow-hidden bg-[#f3eee6]">
-        <Link href={`/products/${product._id}`} className="absolute inset-0">
-          <Image
-            src={String(image)}
-            alt={product.name}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-            sizes="(max-width: 768px) 50vw, 25vw"
-          />
-        </Link>
+      <Link
+        href={`/products/${product._id}`}
+        className="absolute inset-0 z-0"
+        aria-label={`View ${product.name}`}
+      />
+
+      <div className="pointer-events-none relative aspect-square w-full overflow-hidden bg-[#f3eee6]">
+        <Image
+          key={image}
+          src={image}
+          alt={product.name}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          sizes="(max-width: 768px) 50vw, 25vw"
+        />
 
         {discount > 0 && (
-          <span className="absolute top-3 left-3 z-10 bg-primary px-2 py-0.5 text-[11px] font-bold tracking-wide text-primary-foreground">
-            -{discount}%
+          <span className="absolute top-0 left-0 z-10 bg-black px-2.5 py-1 font-heading text-[11px] font-medium italic tracking-wide text-white">
+            OFF {discount}%
           </span>
         )}
 
@@ -96,9 +123,9 @@ export function ProductCard({ product, className }: ProductCardProps) {
           type="button"
           variant="ghost"
           size="icon"
-          className="absolute top-3 right-3 z-10 size-9 rounded-full bg-white shadow-sm hover:bg-white"
           onClick={handleWishlist}
           aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+          className="pointer-events-auto absolute top-2 right-2 z-20 size-9 rounded-full hover:bg-white border border-primary-dark/20"
         >
           <Heart
             className={cn(
@@ -109,56 +136,80 @@ export function ProductCard({ product, className }: ProductCardProps) {
         </Button>
       </div>
 
-      <div className="flex flex-1 flex-col gap-2.5 p-4">
-        <div className="flex flex-col gap-1">
-          <p className="text-[10px] font-semibold tracking-[0.2em] text-primary uppercase">
-            Premium Quality
-          </p>
-          <Link
-            href={`/products/${product._id}`}
-            className="font-heading line-clamp-2 text-[15px] font-semibold tracking-tight text-foreground no-underline transition-colors hover:text-primary"
-          >
+      {/* Details slide up over the image on hover — title stays visible, card height stays fixed */}
+      <div className="pointer-events-none relative z-20 px-3 py-4 text-center">
+        <div
+          className="invisible flex flex-col items-center gap-2 max-sm:hidden"
+          aria-hidden
+        >
+          <h3 className="font-heading line-clamp-2 text-sm font-medium tracking-tight">
             {product.name}
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-1.5">
-          <div className="flex items-center gap-0.5" aria-hidden>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={cn(
-                  "size-3",
-                  i < Math.round(rating)
-                    ? "fill-primary text-primary"
-                    : "fill-muted text-muted"
-                )}
-              />
-            ))}
-          </div>
-          <span className="text-xs text-muted-foreground">
-            {rating.toFixed(1)}
-            <span className="ml-0.5">({reviews})</span>
-          </span>
-        </div>
-
-        <div className="mt-auto flex flex-wrap items-end justify-between gap-2 pt-1">
-          <div className="flex min-w-0 flex-col">
+          </h3>
+          <div className="flex flex-wrap items-baseline justify-center gap-2">
+            <span className="text-base font-semibold tracking-tight">
+              {formatPrice(finalPrice)}
+            </span>
             {discount > 0 && (
-              <span className="text-xs text-muted-foreground line-through">
+              <span className="font-heading text-sm italic line-through">
                 {formatPrice(price)}
               </span>
             )}
-            <span className="text-base font-bold tracking-tight text-foreground">
+          </div>
+          <div className="mt-1 h-8" />
+        </div>
+
+        <div className="absolute inset-x-0 top-0 flex flex-col items-center gap-2 bg-white px-3 pt-4 pb-0 transition-transform duration-300 ease-out will-change-transform group-hover:-translate-y-10 max-sm:static max-sm:translate-y-0 max-sm:px-0 max-sm:pt-0">
+
+          <h3 className="font-heading line-clamp-2 text-sm font-medium tracking-tight text-foreground transition-colors group-hover:text-primary-dark">
+            {product.name}
+          </h3>
+
+          <div className="flex flex-wrap items-baseline justify-center gap-2">
+            <span className="text-base font-semibold tracking-tight text-primary-dark">
               {formatPrice(finalPrice)}
             </span>
+            {discount > 0 && (
+              <span className="font-heading text-sm italic text-muted-foreground line-through">
+                {formatPrice(price)}
+              </span>
+            )}
+          </div>
+
+          <div className="mt-1 flex items-center justify-center gap-2">
+            {variants.map((src, i) => (
+              <button
+                key={src}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setActiveSwatch(i);
+                }}
+                aria-label={`Color option ${i + 1}`}
+                aria-pressed={activeSwatch === i}
+                className={cn(
+                  "pointer-events-auto relative size-8 cursor-pointer overflow-hidden rounded-full border transition-colors",
+                  activeSwatch === i
+                    ? "border-primary-dark"
+                    : "border-border hover:border-primary-dark"
+                )}
+              >
+                <Image
+                  src={src}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="32px"
+                />
+              </button>
+            ))}
           </div>
 
           <Button
             type="button"
             size="sm"
             onClick={handleAddToCart}
-            className="h-9 gap-1.5 bg-primary/35 px-2.5 text-[10px] font-semibold tracking-[0.1em] text-foreground uppercase shadow-none hover:bg-primary/50"
+            className="pointer-events-auto relative z-10 mt-1 h-9 w-full shrink-0 gap-1.5 text-[10px] font-semibold tracking-widest text-foreground uppercase shadow-none hover:bg-primary/50"
           >
             <ShoppingBag className="size-3.5" />
             Add to Cart
