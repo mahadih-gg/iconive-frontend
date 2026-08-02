@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useRef } from "react";
 
 import { ProductCard } from "@/components/common/ProductCard";
 import { SectionHeader } from "@/components/common/SectionHeader";
@@ -36,7 +36,7 @@ export function TopSelling({ products, isLoading = false }: TopSellingProps) {
         <SectionHeader
           className="relative mb-10 sm:mb-12 sm:px-14"
           label="Our Bestsellers"
-          heading="Top Selling"
+          heading="Our Best Selling wigs"
           paragraph="Loved by thousands. Handpicked for you."
         >
           {canScroll ? (
@@ -73,26 +73,26 @@ export function TopSelling({ products, isLoading = false }: TopSellingProps) {
         >
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="w-60 shrink-0 snap-start sm:w-65 lg:w-70"
-                >
-                  <Skeleton className="aspect-4/5 w-full rounded-xl" />
-                  <Skeleton className="mt-4 h-3 w-24" />
-                  <Skeleton className="mt-2 h-5 w-40" />
-                  <Skeleton className="mt-3 h-4 w-28" />
-                  <Skeleton className="mt-4 h-9 w-full" />
-                </div>
-              ))
+              <div
+                key={i}
+                className="w-60 shrink-0 snap-start sm:w-65 lg:w-70"
+              >
+                <Skeleton className="aspect-4/5 w-full rounded-xl" />
+                <Skeleton className="mt-4 h-3 w-24" />
+                <Skeleton className="mt-2 h-5 w-40" />
+                <Skeleton className="mt-3 h-4 w-28" />
+                <Skeleton className="mt-4 h-9 w-full" />
+              </div>
+            ))
             : products.map((product) => (
-                <div
-                  key={product._id}
-                  data-product-card
-                  className="w-60 shrink-0 snap-start sm:w-65 lg:w-70"
-                >
-                  <ProductCard product={product} />
-                </div>
-              ))}
+              <div
+                key={product._id}
+                data-product-card
+                className="w-60 shrink-0 snap-start sm:w-65 lg:w-70"
+              >
+                <ProductCard product={product} />
+              </div>
+            ))}
         </div>
 
         {canScroll ? (

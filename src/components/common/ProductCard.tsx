@@ -114,7 +114,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
         />
 
         {discount > 0 && (
-          <span className="absolute top-0 left-0 z-10 bg-black px-2.5 py-1 font-heading text-[11px] font-medium italic tracking-wide text-white">
+          <span className="absolute top-2 left-2 z-10 bg-black px-2.5 py-1 font-heading text-[11px] font-medium italic tracking-wide text-white">
             OFF {discount}%
           </span>
         )}
@@ -125,11 +125,11 @@ export function ProductCard({ product, className }: ProductCardProps) {
           size="icon"
           onClick={handleWishlist}
           aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
-          className="pointer-events-auto absolute top-2 right-2 z-20 size-9 rounded-full hover:bg-white border border-primary-dark/20"
+          className="pointer-events-auto absolute top-2 right-2 z-20 size-5 md:size-7 rounded-none hover:bg-white border border-primary-dark/20"
         >
           <Heart
             className={cn(
-              "size-4",
+              "size-3.5 md:size-4",
               inWishlist ? "fill-destructive text-destructive" : "text-foreground"
             )}
           />
@@ -149,11 +149,13 @@ export function ProductCard({ product, className }: ProductCardProps) {
             <span className="text-base font-semibold tracking-tight">
               {formatPrice(finalPrice)}
             </span>
+
             {discount > 0 && (
               <span className="font-heading text-sm italic line-through">
                 {formatPrice(price)}
               </span>
             )}
+
           </div>
           <div className="mt-1 h-8" />
         </div>
