@@ -26,7 +26,7 @@ function NavProgressiveBlur() {
 
 function AnnouncementBar({ glass = false }: { glass?: boolean }) {
   return (
-    <div className={cn("flex", glass ? "bg-black/55" : "bg-[#1a1a1a]")}>
+    <div className={cn("flex", glass ? "bg-black/55" : "bg-black")}>
       <p className="mx-auto animate-pulse py-1 text-center text-xs text-white md:text-sm">
         FREE INTERNATIONAL SHIPPING ON ORDER OVER $250!
       </p>
