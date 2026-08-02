@@ -1,15 +1,15 @@
 "use client";
 
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { QuickProductView } from "@/components/common/QuickProductView";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { useCart } from "@/hooks/useCart";
 import { useCurrency } from "@/hooks/useCurrency";
 import { useWishlist } from "@/hooks/useWishlist";
 import { cn } from "@/lib/utils";
@@ -48,10 +48,10 @@ export function ProductCard({ product, className }: ProductCardProps) {
   const router = useRouter();
   const { formatPrice } = useCurrency();
   const { isAuthenticated } = useAuth();
-  const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const inWishlist = isInWishlist?.(product._id) ?? false;
   const [activeSwatch, setActiveSwatch] = useState(0);
+  const [quickViewOpen, setQuickViewOpen] = useState(false);
 
   const productImage = String(
     product.photo ??
@@ -78,18 +78,6 @@ export function ProductCard({ product, className }: ProductCardProps) {
     else addToWishlist(product._id);
   }
 
-  function handleAddToCart(e: React.MouseEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    addToCart({
-      product: product._id,
-      name: product.name,
-      price: finalPrice,
-      amount: 1,
-      image: String(image),
-    });
-  }
-
   return (
     <article
       className={cn(
@@ -114,7 +102,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
         />
 
         {discount > 0 && (
-          <span className="absolute top-2 left-2 z-10 bg-black px-2.5 py-1 font-heading text-[11px] font-medium italic tracking-wide text-white">
+          <span className="absolute top-2 left-2 z-10 bg-black px-2.5 py-1 leading-none font-heading text-[11px] font-medium italic tracking-wide text-white">
             OFF {discount}%
           </span>
         )}
@@ -125,7 +113,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
           size="icon"
           onClick={handleWishlist}
           aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
-          className="pointer-events-auto absolute top-2 right-2 z-20 size-5 md:size-7 rounded-none hover:bg-white border border-primary-dark/20"
+          className="pointer-events-auto absolute top-2 right-2 z-20 size-5 rounded-none border border-primary-dark/20 hover:bg-white md:size-7"
         >
           <Heart
             className={cn(
@@ -134,90 +122,73 @@ export function ProductCard({ product, className }: ProductCardProps) {
             )}
           />
         </Button>
-      </div>
 
-      {/* Details slide up over the image on hover — title stays visible, card height stays fixed */}
-      <div className="pointer-events-none relative z-20 px-3 py-4 text-center">
-        <div
-          className="invisible flex flex-col items-center gap-2 max-sm:hidden"
-          aria-hidden
+        <Button
+          type="button"
+          variant="ctaOutline2"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setQuickViewOpen(true);
+          }}
+          className="pointer-events-auto absolute bottom-3 left-1/2 z-20 w-[calc(100%-1.5rem)] max-w-40 -translate-x-1/2 translate-y-2 uppercase opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 max-sm:translate-y-0 max-sm:opacity-100"
         >
-          <h3 className="font-heading line-clamp-2 text-sm font-medium tracking-tight">
-            {product.name}
-          </h3>
-          <div className="flex flex-wrap items-baseline justify-center gap-2">
-            <span className="text-base font-semibold tracking-tight">
-              {formatPrice(finalPrice)}
+          Quick View
+        </Button>
+      </div>
+
+      <div className="relative z-20 flex flex-col items-center gap-2 px-3 py-4 text-center">
+        <h3 className="font-heading line-clamp-2 text-sm font-medium tracking-tight text-foreground transition-colors group-hover:text-primary-dark">
+          {product.name}
+        </h3>
+
+        <div className="flex flex-wrap items-baseline justify-center gap-2">
+          <span className="text-base font-semibold tracking-tight text-primary-dark">
+            {formatPrice(finalPrice)}
+          </span>
+          {discount > 0 && (
+            <span className="font-heading text-sm italic text-muted-foreground line-through">
+              {formatPrice(price)}
             </span>
-
-            {discount > 0 && (
-              <span className="font-heading text-sm italic line-through">
-                {formatPrice(price)}
-              </span>
-            )}
-
-          </div>
-          <div className="mt-1 h-8" />
+          )}
         </div>
 
-        <div className="absolute inset-x-0 top-0 flex flex-col items-center gap-2 bg-white px-3 pt-4 pb-0 transition-transform duration-300 ease-out will-change-transform group-hover:-translate-y-10 max-sm:static max-sm:translate-y-0 max-sm:px-0 max-sm:pt-0">
-
-          <h3 className="font-heading line-clamp-2 text-sm font-medium tracking-tight text-foreground transition-colors group-hover:text-primary-dark">
-            {product.name}
-          </h3>
-
-          <div className="flex flex-wrap items-baseline justify-center gap-2">
-            <span className="text-base font-semibold tracking-tight text-primary-dark">
-              {formatPrice(finalPrice)}
-            </span>
-            {discount > 0 && (
-              <span className="font-heading text-sm italic text-muted-foreground line-through">
-                {formatPrice(price)}
-              </span>
-            )}
-          </div>
-
-          <div className="mt-1 flex items-center justify-center gap-2">
-            {variants.map((src, i) => (
-              <button
-                key={src}
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setActiveSwatch(i);
-                }}
-                aria-label={`Color option ${i + 1}`}
-                aria-pressed={activeSwatch === i}
-                className={cn(
-                  "pointer-events-auto relative size-8 cursor-pointer overflow-hidden rounded-full border transition-colors",
-                  activeSwatch === i
-                    ? "border-primary-dark"
-                    : "border-border hover:border-primary-dark"
-                )}
-              >
-                <Image
-                  src={src}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="32px"
-                />
-              </button>
-            ))}
-          </div>
-
-          <Button
-            type="button"
-            size="sm"
-            onClick={handleAddToCart}
-            className="pointer-events-auto relative z-10 mt-1 h-9 w-full shrink-0 gap-1.5 text-[10px] font-semibold tracking-widest text-foreground uppercase shadow-none hover:bg-primary/50"
-          >
-            <ShoppingBag className="size-3.5" />
-            Add to Cart
-          </Button>
+        <div className="mt-1 flex items-center justify-center gap-2">
+          {variants.map((src, i) => (
+            <button
+              key={src}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setActiveSwatch(i);
+              }}
+              aria-label={`Color option ${i + 1}`}
+              aria-pressed={activeSwatch === i}
+              className={cn(
+                "pointer-events-auto relative size-8 cursor-pointer overflow-hidden rounded-full border transition-colors",
+                activeSwatch === i
+                  ? "border-primary-dark"
+                  : "border-border hover:border-primary-dark"
+              )}
+            >
+              <Image
+                src={src}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="32px"
+              />
+            </button>
+          ))}
         </div>
       </div>
+
+      <QuickProductView
+        product={product}
+        open={quickViewOpen}
+        onOpenChange={setQuickViewOpen}
+      />
     </article>
   );
 }

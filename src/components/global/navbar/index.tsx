@@ -11,6 +11,8 @@ import { cn } from "@/utils/cn";
 import { NavLinkBar } from "./NavLinkBar";
 import { CONTACT_EMAIL, SOCIAL_LINKS } from "./nav-data";
 
+const EASE = [0.22, 1, 0.36, 1] as const;
+
 function NavProgressiveBlur() {
   return (
     <div className="nav-progressive-blur pointer-events-none absolute inset-0" aria-hidden>
@@ -145,15 +147,37 @@ export function Navbar() {
                 ? { opacity: 0 }
                 : { opacity: 0, y: "-40%" }
             }
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.35, ease: EASE }}
             className="absolute inset-x-0 top-0 z-50"
           >
             <div className="relative">
               <NavProgressiveBlur />
               <div className="relative z-10">
                 <AnnouncementBar glass />
-                <BrandLayer glass />
-                <NavLinkBar tone="glass" />
+                {/* Layer 1 — brand row */}
+                <motion.div
+                  initial={
+                    prefersReducedMotion
+                      ? false
+                      : { opacity: 0, y: -16 }
+                  }
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.55, delay: 0.05, ease: EASE }}
+                >
+                  <BrandLayer glass />
+                </motion.div>
+                {/* Layer 2 — links / actions */}
+                <motion.div
+                  initial={
+                    prefersReducedMotion
+                      ? false
+                      : { opacity: 0, y: -12 }
+                  }
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.55, delay: 0.18, ease: EASE }}
+                >
+                  <NavLinkBar tone="glass" />
+                </motion.div>
               </div>
             </div>
           </motion.header>
@@ -163,7 +187,7 @@ export function Navbar() {
             initial={prefersReducedMotion ? { opacity: 0 } : { y: "-100%" }}
             animate={prefersReducedMotion ? { opacity: 1 } : { y: 0 }}
             exit={prefersReducedMotion ? { opacity: 0 } : { y: "-100%" }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.4, ease: EASE }}
             className="fixed inset-x-0 top-0 z-50 bg-white shadow"
           >
             <NavLinkBar />

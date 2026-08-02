@@ -29,6 +29,7 @@ const buttonVariants = cva(
         cta: "rounded-none bg-primary text-primary-foreground hover:bg-primary/90",
         /** Primary-border CTA on dark media — ChooseYourStyle outline */
         ctaOutline: "rounded-none border border-primary text-white hover:bg-primary/15",
+        ctaOutline2: "rounded-none border border-primary text-foreground bg-white hover:bg-primary hover:text-foreground",
         /** White-border CTA on dark media — Hero "Explore Styles" */
         ctaLight: "rounded-none border border-white/80 text-white hover:bg-white/10",
       },
@@ -58,7 +59,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
@@ -77,3 +78,4 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export { buttonVariants };
+

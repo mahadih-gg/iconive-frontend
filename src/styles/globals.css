@@ -119,7 +119,7 @@
     @apply bg-background font-sans text-foreground antialiased;
   }
 
-  bottom {
+  button {
     cursor: pointer;
   }
 
@@ -131,6 +131,7 @@
   h6 {
     @apply font-heading;
   }
+
 }
 
 /* Progressive blur: stacked backdrop-filter bands + masks
@@ -240,24 +241,8 @@
     --nav-blur-to: rgb(0 0 0 / 0.15);
   }
 
-  .hero-copy {
-    animation: hero-fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
   .hero-scroll-chevron {
     animation: hero-bounce 1.8s ease-in-out infinite;
-  }
-
-  @keyframes hero-fade-up {
-    from {
-      opacity: 0;
-      transform: translateY(1.25rem);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
   }
 
   @keyframes hero-bounce {
@@ -275,8 +260,6 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-
-    .hero-copy,
     .hero-scroll-chevron {
       animation: none;
     }
@@ -284,8 +267,7 @@
 
   /* Tint monochrome Lottie canvases to brand primary-dark (#9b6d3e) */
   .lottie-primary {
-    filter: brightness(0) saturate(100%) invert(46%) sepia(34%) saturate(650%)
-      hue-rotate(352deg) brightness(92%) contrast(88%);
+    filter: brightness(0) saturate(100%) invert(46%) sepia(34%) saturate(650%) hue-rotate(352deg) brightness(92%) contrast(88%);
   }
 
   /* Film-grain texture clipped to text (SectionHeader heading2) */

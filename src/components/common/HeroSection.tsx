@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, ChevronDown } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -10,6 +11,23 @@ import { cn } from "@/lib/utils";
 import { HERO_VIDEOS } from "@/utils/constants";
 
 const FADE_MS = 900;
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+const heroContainerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.1, delayChildren: 0.35 },
+  },
+} as const;
+
+const heroItemVariants = {
+  hidden: { opacity: 0, y: 22 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.75, ease: EASE },
+  },
+} as const;
 
 interface HeroSectionProps {
   /** Ordered muted hero clips. Defaults to site hero videos. */
@@ -162,33 +180,57 @@ export function HeroSection({
   videos = HERO_VIDEOS,
   posterSrc = "/Image/ImagesPage/girl.png",
 }: HeroSectionProps) {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
     <section
       id="home-hero"
       className="relative h-svh min-h-[36rem] overflow-hidden bg-black"
     >
-      <div className="absolute inset-0">
+      <motion.div
+        className="absolute inset-0"
+        initial={prefersReducedMotion ? false : { opacity: 0, scale: 1.06 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.2, ease: EASE }}
+      >
         <HeroVideoCrossfade videos={videos} posterSrc={posterSrc} />
         <div className="absolute inset-0 bg-linear-to-r from-black/75 via-black/40 to-black/20" />
         <div className="absolute inset-0 bg-linear-to-t from-black/35 via-transparent to-black/25" />
-      </div>
+      </motion.div>
 
       <div className="relative z-10 flex h-full flex-col">
-        {/* Clears absolute 3-layer glass navbar overlay */}
+        {/* Clears absolute 2-layer glass navbar overlay */}
         <div className="flex flex-1 items-center px-5 pt-32 pb-24 sm:px-8 sm:pt-36 sm:pb-28 md:pt-40 lg:px-16 xl:px-24">
-          <div className="hero-copy max-w-xl lg:max-w-2xl">
-            <p className="mb-3 text-[11px] font-semibold tracking-[0.35em] text-primary uppercase sm:text-xs">
+          <motion.div
+            className="max-w-xl lg:max-w-2xl"
+            variants={heroContainerVariants}
+            initial={prefersReducedMotion ? false : "hidden"}
+            animate="visible"
+          >
+            <motion.p
+              variants={heroItemVariants}
+              className="mb-3 text-[11px] font-semibold tracking-[0.35em] text-primary uppercase sm:text-xs"
+            >
               Premium Human Hair
-            </p>
-            <h1 className="font-heading text-[2rem] leading-[1.05] font-semibold tracking-[0.04em] text-white uppercase sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[3.75rem]">
+            </motion.p>
+            <motion.h1
+              variants={heroItemVariants}
+              className="font-heading text-[2rem] leading-[1.05] font-semibold tracking-[0.04em] text-white uppercase sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[3.75rem]"
+            >
               Discover Hair
               <br />
               That Feels Like You
-            </h1>
-            <p className="mt-4 max-w-md text-sm leading-relaxed text-white/85 sm:text-base">
+            </motion.h1>
+            <motion.p
+              variants={heroItemVariants}
+              className="mt-4 max-w-md text-sm leading-relaxed text-white/85 sm:text-base"
+            >
               Luxury wigs crafted with 100% human hair for a flawless, natural look.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3 sm:gap-4">
+            </motion.p>
+            <motion.div
+              variants={heroItemVariants}
+              className="mt-6 flex flex-wrap gap-3 sm:gap-4"
+            >
               <Button variant="cta" size="cta" iconMotion="right" asChild>
                 <Link href="/products">
                   Shop Collection
@@ -198,18 +240,26 @@ export function HeroSection({
               <Button variant="ctaLight" size="cta" asChild>
                 <Link href="/products">Explore Styles</Link>
               </Button>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
 
-        <p
+        <motion.p
           className="pointer-events-none absolute top-[42%] right-3 hidden -translate-y-1/2 text-[10px] tracking-[0.45em] text-primary/90 uppercase [writing-mode:vertical-rl] lg:right-6 lg:block xl:right-10"
           aria-hidden
+          initial={prefersReducedMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.9, ease: EASE }}
         >
           Explore The Confidence
-        </p>
+        </motion.p>
 
-        <div className="absolute inset-x-0 bottom-0">
+        <motion.div
+          className="absolute inset-x-0 bottom-0"
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.85, ease: EASE }}
+        >
           <div className="relative pt-14 sm:pt-16">
             <ProgressiveBlur />
             <div className="relative z-10 flex flex-col items-center gap-0.5 pb-5 text-white/70">
@@ -217,7 +267,7 @@ export function HeroSection({
               <ChevronDown className="hero-scroll-chevron h-4 w-4" />
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

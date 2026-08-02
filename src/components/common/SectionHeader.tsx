@@ -1,4 +1,7 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { motion } from "motion/react";
+import { type ReactNode, useRef } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -22,6 +25,9 @@ interface SectionHeaderProps {
   className?: string;
   children?: ReactNode;
 }
+
+
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 const ALIGN_FROM = {
   md: {
@@ -62,6 +68,8 @@ export function SectionHeader({
   className,
   children,
 }: SectionHeaderProps) {
+  const ref = useRef<HTMLElement>(null);
+
   const mobile = mobileAlign ?? align;
   const isDesktopLeft = align === "left";
   const isMobileLeft = mobile === "left";
@@ -69,7 +77,8 @@ export function SectionHeader({
   const bp = ALIGN_FROM[alignFrom];
 
   return (
-    <header
+    <motion.header
+      ref={ref}
       className={cn(
         isMobileLeft ? "text-left" : "text-center",
         isDesktopLeft ? bp.textLeft : bp.textCenter,
@@ -77,7 +86,7 @@ export function SectionHeader({
       )}
     >
       {label ? (
-        <div
+        <motion.div
           className={cn(
             "mb-4 flex items-center gap-3",
             isMobileLeft ? "justify-start" : "justify-center",
@@ -85,19 +94,38 @@ export function SectionHeader({
           )}
         >
           {(lines === "both" || lines === "start") && (
-            <span className="h-px w-8 bg-primary-dark sm:w-10" aria-hidden />
+            <motion.span
+              initial={{ opacity: 0, x: -10 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, delay: 0.2, ease: EASE }}
+              className="h-px w-8 bg-primary-dark sm:w-10"
+              aria-hidden
+            />
           )}
-          <p className="pt-1 leading-none font-heading text-[11px] font-semibold tracking-[0.28em] text-primary-dark uppercase sm:text-xs">
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.2, ease: EASE }}
+            className="pt-1 leading-none font-heading text-[11px] font-semibold tracking-[0.28em] text-primary-dark uppercase sm:text-xs">
             {label}
-          </p>
+          </motion.p>
           {lines === "both" && (
-            <span className="h-px w-8 bg-primary-dark sm:w-10" aria-hidden />
+            <motion.span
+              initial={{ opacity: 0, x: 10 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, delay: 0.2, ease: EASE }}
+              className="h-px w-8 bg-primary-dark sm:w-10" aria-hidden />
           )}
-        </div>
+        </motion.div>
       ) : null}
 
       {heading || heading2 ? (
-        <h2 className="font-heading text-3xl font-semibold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+        <motion.h2
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, delay: 0.1, ease: EASE }}
+          className="font-heading text-3xl font-semibold tracking-tight text-foreground sm:text-4xl md:text-5xl"
+        >
           {heading ? <span>{heading}</span> : null}
           {heading && heading2 && !isHeading2Br ? " " : null}
           {heading2 ? (
@@ -113,13 +141,25 @@ export function SectionHeader({
               </span>
             </>
           ) : null}
-        </h2>
+        </motion.h2>
       ) : null}
 
-      {children}
+      {
+        children ? <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, ease: EASE }}
+        >
+          {children}
+        </motion.div>
+          : null
+      }
 
       {subheading ? (
-        <p
+        <motion.p
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, delay: 0.3, ease: EASE }}
           className={cn(
             "mt-3 font-heading text-lg font-medium tracking-tight text-foreground sm:text-xl",
             !isMobileLeft && "mx-auto",
@@ -127,11 +167,14 @@ export function SectionHeader({
           )}
         >
           {subheading}
-        </p>
+        </motion.p>
       ) : null}
 
       {paragraph ? (
-        <p
+        <motion.p
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, delay: 0.4, ease: EASE }}
           className={cn(
             "mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base",
             !isMobileLeft && "mx-auto",
@@ -139,8 +182,8 @@ export function SectionHeader({
           )}
         >
           {paragraph}
-        </p>
+        </motion.p>
       ) : null}
-    </header>
+    </motion.header>
   );
 }
