@@ -1,13 +1,10 @@
-import { Lock, RotateCcw, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { BsArrowRight } from "react-icons/bs";
 
 import GlareHover from "@/components/GlareHover";
 import { SectionHeader } from "@/components/common/SectionHeader";
-import { TrustMarker } from "@/components/common/TrustMarker";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 const STYLE_CATEGORIES = [
   {
@@ -29,24 +26,6 @@ const STYLE_CATEGORIES = [
     image: "/Image/ImagesPage/ladies.webp",
     cta: "Explore Ladies",
     ctaVariant: "solid" as const,
-  },
-] as const;
-
-const SECTION_TRUST_MARKERS = [
-  {
-    icon: Truck,
-    title: "Free Worldwide Shipping",
-    desc: "On Orders Over $250",
-  },
-  {
-    icon: RotateCcw,
-    title: "30-Day Returns",
-    desc: "No Questions Asked",
-  },
-  {
-    icon: Lock,
-    title: "Secure Payment",
-    desc: "100% Protected",
   },
 ] as const;
 
@@ -120,25 +99,6 @@ export function ChooseYourStyle() {
                 </div>
               </article>
             </GlareHover>
-          ))}
-        </div>
-
-        <div className="mt-10 flex flex-col items-stretch justify-center gap-6 border-t border-border/60 pt-8 sm:mt-12 sm:flex-row sm:items-center sm:gap-0 sm:pt-10">
-          {SECTION_TRUST_MARKERS.map((marker, index) => (
-            <TrustMarker
-              key={marker.title}
-              icon={marker.icon}
-              title={marker.title}
-              desc={marker.desc}
-              variant="on-light"
-              className={cn(
-                "justify-center sm:flex-1",
-                index < SECTION_TRUST_MARKERS.length - 1 &&
-                "sm:border-r sm:border-border",
-                index > 0 && "sm:pl-6",
-                index < SECTION_TRUST_MARKERS.length - 1 && "sm:pr-6"
-              )}
-            />
           ))}
         </div>
       </div>

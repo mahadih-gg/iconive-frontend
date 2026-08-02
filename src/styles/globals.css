@@ -282,6 +282,12 @@
     }
   }
 
+  /* Tint monochrome Lottie canvases to brand primary-dark (#9b6d3e) */
+  .lottie-primary {
+    filter: brightness(0) saturate(100%) invert(46%) sepia(34%) saturate(650%)
+      hue-rotate(352deg) brightness(92%) contrast(88%);
+  }
+
   /* Film-grain texture clipped to text (SectionHeader heading2) */
   .text-noise {
     position: relative;

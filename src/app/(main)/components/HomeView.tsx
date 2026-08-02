@@ -2,45 +2,36 @@
 
 import { FloatingWhatsApp } from "react-floating-whatsapp";
 
+import { BlogSection } from "@/components/common/BlogSection";
 import { ChooseYourStyle } from "@/components/common/ChooseYourStyle";
 import { CustomerReviews } from "@/components/common/CustomerReviews";
+import { FaqSection } from "@/components/common/FaqSection";
 import { ForWholesellers } from "@/components/common/ForWholesellers";
 import { HeroSection } from "@/components/common/HeroSection";
-import { ProductCard } from "@/components/common/ProductCard";
-import { SectionHeader } from "@/components/common/SectionHeader";
 import { SpecialCollection } from "@/components/common/SpecialCollection";
+import { SubscribeSection } from "@/components/common/SubscribeSection";
 import { TopSelling } from "@/components/common/TopSelling";
+import { Trending } from "@/components/common/Trending";
+import { TrustMarkersSection } from "@/components/common/TrustMarkersSection";
 import { WhyChooseUs } from "@/components/common/WhyChooseUs";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
+import { HERO_VIDEOS } from "@/utils/constants";
 
-export function HomeView() {
+interface HomeViewProps {
+  heroVideos?: readonly string[];
+}
+
+export function HomeView({ heroVideos = HERO_VIDEOS }: HomeViewProps) {
   const { topSelling, trending, offers, isLoading } = useFeaturedProducts();
 
   return (
     <div>
-      <HeroSection />
+      <HeroSection videos={heroVideos} />
       <ChooseYourStyle />
+      <TrustMarkersSection />
 
       <TopSelling products={topSelling.slice(0, 8)} isLoading={isLoading} />
-
-      <section className="mx-auto max-w-7xl px-4 py-8">
-        <SectionHeader
-          className="mb-6"
-          label="Just In"
-          heading="Trending"
-          paragraph="Styles everyone is loving right now."
-        />
-        <div className="flex flex-wrap justify-center gap-4">
-          {isLoading
-            ? Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-72 w-44" />
-            ))
-            : trending.slice(0, 8).map((p) => (
-              <ProductCard key={p._id} product={p} className="w-[47%] md:w-56" />
-            ))}
-        </div>
-      </section>
+      <Trending products={trending.slice(0, 8)} isLoading={isLoading} />
 
       <ForWholesellers />
       <SpecialCollection
@@ -49,6 +40,9 @@ export function HomeView() {
       />
       <WhyChooseUs />
       <CustomerReviews />
+      <BlogSection />
+      <FaqSection />
+      <SubscribeSection />
 
       <FloatingWhatsApp
         phoneNumber="8801601162155"

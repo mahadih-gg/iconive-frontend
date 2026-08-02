@@ -7,6 +7,7 @@ import { ProductCard } from "@/components/common/ProductCard";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCanScrollX } from "@/hooks/useCanScrollX";
 import type { Product } from "@/types/product.type";
 
 interface TopSellingProps {
@@ -16,6 +17,10 @@ interface TopSellingProps {
 
 export function TopSelling({ products, isLoading = false }: TopSellingProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const canScroll = useCanScrollX(
+    scrollerRef,
+    isLoading ? "loading" : products.length
+  );
 
   function scrollByCard(direction: -1 | 1) {
     const el = scrollerRef.current;
@@ -34,28 +39,32 @@ export function TopSelling({ products, isLoading = false }: TopSellingProps) {
           heading="Top Selling"
           paragraph="Loved by thousands. Handpicked for you."
         >
-          <div className="absolute top-1/2 right-0 hidden -translate-y-1/2 items-center gap-2 sm:flex">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="size-10 rounded-full border-border bg-white shadow-sm hover:bg-muted"
-              onClick={() => scrollByCard(-1)}
-              aria-label="Previous products"
-            >
-              <ChevronLeft />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="size-10 rounded-full border-border bg-white shadow-sm hover:bg-muted"
-              onClick={() => scrollByCard(1)}
-              aria-label="Next products"
-            >
-              <ChevronRight />
-            </Button>
-          </div>
+          {canScroll ? (
+            <div className="absolute top-1/2 right-0 hidden -translate-y-1/2 items-center gap-1.5 sm:flex">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="size-9 border-border-primary-dark bg-muted text-foreground hover:bg-foreground hover:text-white"
+                onClick={() => scrollByCard(-1)}
+                iconMotion="left"
+                aria-label="Previous products"
+              >
+                <ChevronLeft className="size-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="size-9 border-border-primary-dark bg-muted text-foreground hover:bg-foreground hover:text-white"
+                onClick={() => scrollByCard(1)}
+                iconMotion="right"
+                aria-label="Next products"
+              >
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
+          ) : null}
         </SectionHeader>
 
         <div
@@ -86,28 +95,32 @@ export function TopSelling({ products, isLoading = false }: TopSellingProps) {
               ))}
         </div>
 
-        <div className="mt-6 flex items-center justify-center gap-2 sm:hidden">
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            className="size-10 rounded-full"
-            onClick={() => scrollByCard(-1)}
-            aria-label="Previous products"
-          >
-            <ChevronLeft />
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            className="size-10 rounded-full"
-            onClick={() => scrollByCard(1)}
-            aria-label="Next products"
-          >
-            <ChevronRight />
-          </Button>
-        </div>
+        {canScroll ? (
+          <div className="mt-6 flex items-center justify-center gap-1.5 sm:hidden">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="size-9 border-border-primary-dark bg-muted text-foreground hover:bg-foreground hover:text-white"
+              onClick={() => scrollByCard(-1)}
+              iconMotion="left"
+              aria-label="Previous products"
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="size-9 border-border-primary-dark bg-muted text-foreground hover:bg-foreground hover:text-white"
+              onClick={() => scrollByCard(1)}
+              iconMotion="right"
+              aria-label="Next products"
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+        ) : null}
       </div>
     </section>
   );

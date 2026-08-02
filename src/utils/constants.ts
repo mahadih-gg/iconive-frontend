@@ -29,3 +29,11 @@ export const ROUTES = {
   register: "/register",
   checkout: "/checkout",
 } as const;
+
+/** Hero background videos — first entry is SSR/preloaded on the home page. */
+export const HERO_VIDEOS = [
+  "/videos/video-1.webm",
+  "/videos/video-2.webm",
+  "/videos/video-3.webm",
+  "/videos/video-4.webm",
+] as const;

@@ -3,12 +3,17 @@
 import { ArrowRight, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { HERO_VIDEOS } from "@/utils/constants";
+
+const FADE_MS = 900;
 
 interface HeroSectionProps {
-  /** Optional hero video. When omitted, the poster image is shown. */
-  videoSrc?: string;
+  /** Ordered muted hero clips. Defaults to site hero videos. */
+  videos?: readonly string[];
   posterSrc?: string;
 }
 
@@ -25,8 +30,136 @@ function ProgressiveBlur() {
   );
 }
 
+interface HeroVideoCrossfadeProps {
+  videos: readonly string[];
+  posterSrc: string;
+}
+
+function HeroVideoCrossfade({ videos, posterSrc }: HeroVideoCrossfadeProps) {
+  const [activeSlot, setActiveSlot] = useState<0 | 1>(0);
+  const [slotIndex, setSlotIndex] = useState<[number, number]>([0, Math.min(1, videos.length - 1)]);
+  const [isFading, setIsFading] = useState(false);
+  const slotARef = useRef<HTMLVideoElement>(null);
+  const slotBRef = useRef<HTMLVideoElement>(null);
+  const isFadingRef = useRef(false);
+
+  function getRef(slot: 0 | 1) {
+    return slot === 0 ? slotARef : slotBRef;
+  }
+
+  useEffect(() => {
+    const el = slotARef.current;
+    if (!el) return;
+    el.muted = true;
+    void el.play().catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!isFading) return;
+
+    const activeEl = getRef(activeSlot).current;
+    const prevSlot = (activeSlot === 0 ? 1 : 0) as 0 | 1;
+
+    function startActivePlayback() {
+      if (!activeEl) return;
+      activeEl.muted = true;
+      try {
+        activeEl.currentTime = 0;
+      } catch {
+        /* ignore until media is ready */
+      }
+      void activeEl.play().catch(() => {});
+    }
+
+    if (activeEl) {
+      if (activeEl.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+        startActivePlayback();
+      } else {
+        activeEl.addEventListener("loadeddata", startActivePlayback, { once: true });
+        activeEl.load();
+      }
+    }
+
+    const timer = window.setTimeout(() => {
+      isFadingRef.current = false;
+      setIsFading(false);
+      const prevEl = getRef(prevSlot).current;
+      if (prevEl) {
+        prevEl.pause();
+        try {
+          prevEl.currentTime = 0;
+        } catch {
+          /* ignore */
+        }
+      }
+    }, FADE_MS);
+
+    return () => {
+      window.clearTimeout(timer);
+      activeEl?.removeEventListener("loadeddata", startActivePlayback);
+    };
+  }, [isFading, activeSlot, slotIndex]);
+
+  function handleEnded(slot: 0 | 1) {
+    if (slot !== activeSlot || isFadingRef.current || videos.length < 2) return;
+
+    const activeIndex = slotIndex[slot];
+    const nextIndex = (activeIndex + 1) % videos.length;
+    const nextSlot = (slot === 0 ? 1 : 0) as 0 | 1;
+
+    isFadingRef.current = true;
+    setSlotIndex((prev) => {
+      const next: [number, number] = [...prev];
+      next[nextSlot] = nextIndex;
+      return next;
+    });
+    setActiveSlot(nextSlot);
+    setIsFading(true);
+  }
+
+  return (
+    <div className="absolute inset-0">
+      <Image
+        src={posterSrc}
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-[center_20%]"
+        aria-hidden
+      />
+
+      {([0, 1] as const).map((slot) => {
+        const isActive = activeSlot === slot;
+        const videoSrc = videos[slotIndex[slot]];
+        if (!videoSrc) return null;
+
+        return (
+          <video
+            key={slot}
+            ref={getRef(slot)}
+            className={cn(
+              "absolute inset-0 h-full w-full object-cover object-[center_20%] transition-opacity ease-in-out",
+              isActive ? "opacity-100" : "opacity-0",
+            )}
+            style={{ transitionDuration: `${FADE_MS}ms` }}
+            src={videoSrc}
+            muted
+            playsInline
+            preload={slot === 0 ? "auto" : "metadata"}
+            autoPlay={slot === 0}
+            poster={slot === 0 ? posterSrc : undefined}
+            onEnded={() => handleEnded(slot)}
+            aria-hidden
+          />
+        );
+      })}
+    </div>
+  );
+}
+
 export function HeroSection({
-  videoSrc,
+  videos = HERO_VIDEOS,
   posterSrc = "/Image/ImagesPage/girl.png",
 }: HeroSectionProps) {
   return (
@@ -34,29 +167,8 @@ export function HeroSection({
       id="home-hero"
       className="relative h-svh min-h-[36rem] overflow-hidden bg-black"
     >
-      {/* Media plane — pass videoSrc later to switch image → video */}
       <div className="absolute inset-0">
-        {videoSrc ? (
-          <video
-            className="h-full w-full object-cover object-[center_20%]"
-            autoPlay
-            muted
-            loop
-            playsInline
-            poster={posterSrc}
-          >
-            <source src={videoSrc} type="video/mp4" />
-          </video>
-        ) : (
-          <Image
-            src={posterSrc}
-            alt="Premium human hair wigs by Iconive"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-[center_20%]"
-          />
-        )}
+        <HeroVideoCrossfade videos={videos} posterSrc={posterSrc} />
         <div className="absolute inset-0 bg-linear-to-r from-black/75 via-black/40 to-black/20" />
         <div className="absolute inset-0 bg-linear-to-t from-black/35 via-transparent to-black/25" />
       </div>
