@@ -122,9 +122,9 @@ export function ProductDetailView() {
           )}
 
           <p className="mt-4 flex items-center text-sm text-muted-foreground">
-            <Clock className="me-1 h-4 w-4" />
+            <Clock className="mr-1 h-4 w-4" />
             Processing Time:
-            <span className="ps-2 font-bold text-foreground">15-20 business days</span>
+            <span className="pl-2 font-bold text-foreground">15-20 business days</span>
           </p>
           <p className="pt-2 text-xs text-muted-foreground">
             Processing time does not include delivery time
@@ -154,7 +154,7 @@ export function ProductDetailView() {
 
           <div className="flex flex-wrap gap-3">
             <Button onClick={handleCartToggle} className="px-8 font-bold">
-              <ShoppingCart className="me-2 h-4 w-4" />
+              <ShoppingCart className="mr-2 h-4 w-4" />
               {inCart ? "REMOVE FROM CART" : "ADD TO CART"}
             </Button>
             {isAuthenticated && (
@@ -165,7 +165,7 @@ export function ProductDetailView() {
                 }
               >
                 <Heart
-                  className={`me-2 h-4 w-4 ${inWishlist ? "fill-destructive text-destructive" : ""}`}
+                  className={`mr-2 h-4 w-4 ${inWishlist ? "fill-destructive text-destructive" : ""}`}
                 />
                 Wishlist
               </Button>

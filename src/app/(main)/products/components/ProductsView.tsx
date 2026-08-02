@@ -76,7 +76,7 @@ export function ProductsView() {
                         </p>
                         <button
                           type="button"
-                          className="ms-auto"
+                          className="ml-auto"
                           onClick={(e) => {
                             e.stopPropagation();
                             setExpandedCategory(isOpen ? "" : category._id);
@@ -95,7 +95,7 @@ export function ProductsView() {
                           {subs.map((sub) => (
                             <div
                               key={sub._id}
-                              className="my-3 flex items-center ps-2"
+                              className="my-3 flex items-center pl-2"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 toggleSubcategory(sub._id);
@@ -107,7 +107,7 @@ export function ProductsView() {
                               />
                               <p
                                 className={cn(
-                                  "my-auto ms-3 text-sm hover:text-primary",
+                                  "my-auto ml-3 text-sm hover:text-primary",
                                 )}
                               >
                                 {sub.name}
@@ -133,7 +133,7 @@ export function ProductsView() {
           </div>
         </aside>
 
-        <div className="flex-1 pt-4 lg:ps-8 lg:pt-0">
+        <div className="flex-1 pt-4 lg:pl-8 lg:pt-0">
           <div className="mx-auto flex flex-wrap justify-center gap-4">
             {isLoading
               ? Array.from({ length: 8 }).map((_, i) => (

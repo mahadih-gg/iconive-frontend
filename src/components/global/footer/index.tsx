@@ -67,7 +67,7 @@ export function Footer() {
 
         <div className="mx-auto flex w-full max-w-7xl flex-col justify-between gap-8 px-4 py-10 lg:flex-row lg:px-8">
           <div className="my-4 text-center lg:my-auto lg:w-1/3 lg:text-left">
-            <h3 className="text-xl font-bold text-muted-foreground">ICONIVE</h3>
+            <h3 className="font-heading text-xl font-bold text-muted-foreground">ICONIVE</h3>
             <p className="mt-4 flex flex-col items-center gap-1 text-sm text-muted-foreground lg:flex-row lg:items-start">
               <MapPin className="mt-0.5 h-5 w-5 shrink-0" />
               <span>
@@ -112,14 +112,14 @@ export function Footer() {
 
       <div className="bg-black py-3 text-center text-white">
         <p className="m-0 mx-auto text-center text-sm">
-          <span className="me-2 text-white/50">
+          <span className="mr-2 text-white/50">
             © All Rights Reserved by{" "}
             <Link href="/" className="text-white no-underline">
               Iconive Wigs
             </Link>
           </span>
           |
-          <span className="ms-2 text-white/50">
+          <span className="ml-2 text-white/50">
             Developed by{" "}
             <a
               href="https://web.facebook.com/codecatio"

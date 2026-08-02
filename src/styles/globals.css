@@ -1,13 +1,37 @@
 @import 'tailwindcss';
+/*
+  ---break---
+*/
+@custom-variant dark (&:is(.dark *));
 
 @source '../**/*.{js,ts,jsx,tsx,mdx}';
 
 @plugin 'tailwindcss-animate';
 
-@theme {
-  --font-sans: var(--font-poppins), system-ui, sans-serif;
-  --font-heading: var(--font-raleway), system-ui, sans-serif;
+@theme inline {
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-josefin-sans), ui-sans-serif, system-ui, sans-serif;
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  @keyframes marquee {
+  from {
+    transform: translateX(0);
+    }
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+    }
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+}
 
+@theme {
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -49,6 +73,7 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
   *,
   ::after,
   ::before,
@@ -83,6 +108,171 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+
+  bottom {
+    @apply cursor-pointer;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
+  }
+}
+
+/* Progressive blur: stacked backdrop-filter bands + masks
+   Technique: https://preetsuthar.me/writing/progressive-blur */
+@layer components {
+  .hero-progressive-blur {
+    --hero-blur-from: rgb(0 0 0 / 0);
+    --hero-blur-to: rgb(0 0 0 / 0.62);
+  }
+
+  .hero-blur-layer,
+  .nav-blur-layer {
+    position: absolute;
+    inset: 0;
+    -webkit-backdrop-filter: blur(var(--blur));
+    backdrop-filter: blur(var(--blur));
+    -webkit-mask-image: var(--mask);
+    mask-image: var(--mask);
+  }
+
+  /* Hero bottom bar — strongest blur at bottom */
+  .hero-blur-layer[data-blur="1"] {
+    --blur: 2px;
+    --mask: linear-gradient(to bottom, transparent 0%, black 40%);
+  }
+
+  .hero-blur-layer[data-blur="2"] {
+    --blur: 4px;
+    --mask: linear-gradient(to bottom, transparent 10%, black 52%);
+  }
+
+  .hero-blur-layer[data-blur="4"] {
+    --blur: 8px;
+    --mask: linear-gradient(to bottom, transparent 22%, black 66%);
+  }
+
+  .hero-blur-layer[data-blur="8"] {
+    --blur: 16px;
+    --mask: linear-gradient(to bottom, transparent 38%, black 80%);
+  }
+
+  .hero-blur-layer[data-blur="16"] {
+    --blur: 28px;
+    --mask: linear-gradient(to bottom, transparent 55%, black 100%);
+  }
+
+  .hero-blur-tint {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      var(--hero-blur-from) 0%,
+      rgb(0 0 0 / 0.28) 45%,
+      var(--hero-blur-to) 100%
+    );
+  }
+
+  /* Navbar — strongest blur at top, fades downward */
+  .nav-progressive-blur {
+    --nav-blur-from: rgb(0 0 0 / 0.5);
+    --nav-blur-to: rgb(0 0 0 / 0);
+  }
+
+  .nav-blur-layer[data-blur="1"] {
+    --blur: 3px;
+    --mask: linear-gradient(to top, transparent 0%, black 50%);
+  }
+
+  .nav-blur-layer[data-blur="2"] {
+    --blur: 6px;
+    --mask: linear-gradient(to top, transparent 10%, black 60%);
+  }
+
+  .nav-blur-layer[data-blur="4"] {
+    --blur: 12px;
+    --mask: linear-gradient(to top, transparent 22%, black 72%);
+  }
+
+  .nav-blur-layer[data-blur="8"] {
+    --blur: 20px;
+    --mask: linear-gradient(to top, transparent 38%, black 85%);
+  }
+
+  .nav-blur-layer[data-blur="16"] {
+    --blur: 32px;
+    --mask: linear-gradient(to top, transparent 52%, black 100%);
+  }
+
+  .nav-blur-tint {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      var(--nav-blur-from) 0%,
+      rgb(0 0 0 / 0.28) 50%,
+      var(--nav-blur-to) 100%
+    );
+  }
+
+  .nav-glass-solid .nav-blur-tint {
+    --nav-blur-from: rgb(0 0 0 / 0.88);
+    --nav-blur-to: rgb(0 0 0 / 0.78);
+  }
+
+  .nav-glass-sticky {
+    background: rgb(0 0 0 / 0.2);
+  }
+
+  .nav-glass-sticky .nav-blur-tint {
+    --nav-blur-from: rgb(0 0 0 / 0.4);
+    --nav-blur-to: rgb(0 0 0 / 0.15);
+  }
+
+  .hero-copy {
+    animation: hero-fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .hero-scroll-chevron {
+    animation: hero-bounce 1.8s ease-in-out infinite;
+  }
+
+  @keyframes hero-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(1.25rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes hero-bounce {
+    0%,
+    100% {
+      transform: translateY(0);
+      opacity: 0.55;
+    }
+
+    50% {
+      transform: translateY(0.35rem);
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-copy,
+    .hero-scroll-chevron {
+      animation: none;
+    }
   }
 }

@@ -67,7 +67,7 @@ export function LoginView() {
             New to Iconive ?
             <Link
               href="/register"
-              className="ms-2 border-b border-foreground pb-0.5 text-foreground no-underline"
+              className="ml-2 border-b border-foreground pb-0.5 text-foreground no-underline"
             >
               Sign Up
             </Link>

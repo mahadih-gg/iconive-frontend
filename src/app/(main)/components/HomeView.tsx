@@ -6,33 +6,10 @@ import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
 import { FloatingWhatsApp } from "react-floating-whatsapp";
 
-import { HomeCarousel } from "@/components/common/HomeCarousel";
+import { HeroSection } from "@/components/common/HeroSection";
 import { ProductCard } from "@/components/common/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
-
-const FEATURES = [
-  {
-    icon: "/Image/ImagesPage/freeshipping.svg",
-    title: "Free Shipping",
-    desc: "Free Shipping on order over $200",
-  },
-  {
-    icon: "/Image/ImagesPage/secure.svg",
-    title: "Secure Payment",
-    desc: "All payments are done through Paystation.",
-  },
-  {
-    icon: "/Image/ImagesPage/support.svg",
-    title: "Support 24/7",
-    desc: "Contact us 24 hours a day, 7 days a week",
-  },
-  {
-    icon: "/Image/ImagesPage/refund.svg",
-    title: "10 Days Return",
-    desc: "Return it within 10 days for exchange",
-  },
-] as const;
 
 export function HomeView() {
   const router = useRouter();
@@ -40,27 +17,10 @@ export function HomeView() {
 
   return (
     <div>
-      <HomeCarousel />
+      <HeroSection />
 
-      <div className="mx-auto mt-16 flex max-w-7xl flex-wrap justify-center px-4">
-        {FEATURES.map((feature) => (
-          <div
-            key={feature.title}
-            className="flex w-full border-b p-2 sm:w-1/2 lg:w-1/4 lg:border-b-0 lg:border-r lg:last:border-r-0"
-          >
-            <div className="my-auto w-1/4 p-2">
-              <Image src={feature.icon} alt={feature.title} width={48} height={48} className="h-auto w-full" />
-            </div>
-            <div className="my-auto w-3/4 p-3 text-start">
-              <p className="text-sm font-bold text-foreground">{feature.title}</p>
-              <p className="text-xs text-muted-foreground">{feature.desc}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="mx-auto mb-12 max-w-7xl px-4">
-        <div className="row flex flex-col gap-4 lg:flex-row">
+      <div className="mx-auto mb-12 mt-16 max-w-7xl px-4">
+        <div className="flex flex-col gap-4 lg:flex-row">
           <button
             type="button"
             className="w-full py-8 text-center lg:w-1/2"
@@ -139,7 +99,7 @@ export function HomeView() {
       </section>
 
       <div className="relative mx-auto max-w-7xl px-4 pb-12">
-        <div className="hidden overflow-hidden lg:block lg:w-2/3 lg:ms-auto">
+        <div className="hidden overflow-hidden lg:block lg:w-2/3 lg:ml-auto">
           <Image
             src="/Image/ImagesPage/WI.svg"
             alt="Wholesale"
