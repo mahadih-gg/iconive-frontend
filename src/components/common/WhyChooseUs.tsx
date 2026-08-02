@@ -99,26 +99,31 @@ export function WhyChooseUs({
     >
       {/* ── Top: absolute left image + contained right content ── */}
       <div className="relative lg:min-h-144 xl:min-h-160">
-        {/* Mobile image */}
+        {/* Mobile / tablet: soft image wash behind stacked content */}
         <motion.div
           className={cn(
-            "relative h-80 w-full overflow-hidden sm:h-96 lg:hidden",
-            "mask-[linear-gradient(to_bottom,black_0%,black_58%,transparent_100%)]"
+            "pointer-events-none absolute inset-0 z-0 overflow-hidden lg:hidden",
+            "mask-[linear-gradient(to_bottom,black_0%,black_65%,transparent_100%)]"
           )}
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+          initial={prefersReducedMotion ? false : { opacity: 0 }}
           animate={
             shouldAnimate || prefersReducedMotion
-              ? { opacity: 1, y: 0 }
-              : { opacity: 0, y: 16 }
+              ? { opacity: 0.32 }
+              : { opacity: 0 }
           }
           transition={{ duration: 0.65, ease: EASE }}
+          aria-hidden
         >
           <Image
             src={imageSrc}
-            alt="Premium Iconive wig styled with soft platinum waves"
+            alt=""
             fill
             sizes="100vw"
-            className="object-cover object-left"
+            className="object-cover object-[center_18%] md:object-[center_12%]"
+          />
+          <div
+            className="absolute inset-0 bg-linear-to-b from-[#fdf8f4]/40 via-[#fdf8f4]/15 to-[#fdf8f4]"
+            aria-hidden
           />
         </motion.div>
 
@@ -156,12 +161,12 @@ export function WhyChooseUs({
           </div>
         </motion.div>
 
-        {/* Right content — keeps max-w-7xl alignment on the outer edge */}
-        <div className="relative z-10 mx-auto flex items-center px-4 py-14 sm:px-6 lg:min-h-144 lg:py-20 lg:pl-[min(34vw,26rem)] lg:pr-[max(1.5rem,calc((100vw-80rem)/2+2rem))] xl:min-h-160 xl:pl-[min(36vw,30rem)]">
-          <div className="grid w-full gap-10 md:grid-cols-2 md:items-center md:gap-8 xl:gap-10">
+        {/* Content — stacked through 1440; side-by-side only on wide desktops */}
+        <div className="relative z-10 mx-auto flex items-center px-4 py-14 sm:px-6 md:px-8 md:py-16 lg:min-h-144 lg:py-20 lg:pl-[min(34vw,26rem)] lg:pr-[max(1.5rem,calc((100vw-80rem)/2+2rem))] xl:min-h-160 xl:pl-[min(36vw,30rem)]">
+          <div className="mx-auto flex w-full max-w-3xl flex-col gap-10 lg:mx-0 lg:max-w-none lg:gap-8 min-[1440px]:grid min-[1440px]:grid-cols-2 min-[1440px]:items-center xl:gap-10">
             {/* Copy */}
             <motion.div
-              className="flex flex-col items-center md:items-start"
+              className="flex flex-col items-center min-[1440px]:items-start"
               initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
               animate={
                 shouldAnimate || prefersReducedMotion
@@ -173,6 +178,7 @@ export function WhyChooseUs({
               <SectionHeader
                 align="left"
                 mobileAlign="center"
+                alignFrom="min-1440"
                 labelLines="both"
                 label="Why People Choose Us"
                 heading="Go Ahead,"
@@ -181,17 +187,17 @@ export function WhyChooseUs({
                 paragraph="We are always willing to make our customers happy and are ready to support your most bold and creative ideas in hairstyle."
               />
 
-              <div className="mt-7 flex w-full max-w-md flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-center sm:gap-0 md:justify-start">
+              <div className="mt-7 flex w-full max-w-md gap-3 items-start justify-center sm:gap-4 min-[1440px]:justify-start">
                 {STATS.map((stat, index) => (
                   <div
                     key={stat.label}
                     className={cn(
-                      "flex flex-1 flex-col items-center px-2 md:items-start",
-                      index > 0 && "sm:border-l sm:border-border sm:pl-4",
+                      "flex flex-1 flex-col items-center px-1.5 sm:px-2 min-[1440px]:items-start",
+                      index > 0 && "border-l border-border pl-3 sm:pl-4",
                       index < STATS.length - 1 && "sm:pr-4"
                     )}
                   >
-                    <p className="font-heading flex items-center gap-1 text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+                    <p className="font-heading flex items-center text-center min-[1440px]:text-start gap-1 text-lg font-semibold tracking-tight text-foreground sm:text-xl md:text-2xl lg:text-xl">
                       {stat.value}
                       {"showStar" in stat && stat.showStar ? (
                         <Star
@@ -201,7 +207,7 @@ export function WhyChooseUs({
                         />
                       ) : null}
                     </p>
-                    <p className="mt-0.5 text-[11px] text-muted-foreground sm:text-xs">
+                    <p className="mt-0.5 text-[11px] text-muted-foreground sm:text-xs text-center min-[1440px]:text-start">
                       {stat.label}
                     </p>
                   </div>
@@ -220,7 +226,7 @@ export function WhyChooseUs({
 
             {/* Feature cards */}
             <motion.div
-              className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5"
+              className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 md:gap-6"
               initial={prefersReducedMotion ? false : { opacity: 0, x: 28 }}
               animate={
                 shouldAnimate || prefersReducedMotion
@@ -234,9 +240,9 @@ export function WhyChooseUs({
                 return (
                   <article
                     key={feature.title}
-                    className="rounded-2xl border border-[#e8dfd4] bg-[#fffcf8] p-6 text-left transition-transform duration-500 hover:-translate-y-0.5 sm:p-7"
+                    className="border-2 border-primary-dark/20 bg-[#fffcf8] p-4 text-left transition-transform duration-500 hover:-translate-y-0.5 sm:p-5 md:p-6 lg:p-7"
                   >
-                    <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-[#f5ebe0]">
+                    <div className="mb-3 flex size-11 items-center justify-center rounded-full bg-[#f5ebe0] sm:mb-4 sm:size-12">
                       <Icon
                         className="size-5 text-primary-dark"
                         strokeWidth={1.5}

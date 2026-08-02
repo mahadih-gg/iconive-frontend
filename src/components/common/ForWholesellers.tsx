@@ -5,9 +5,8 @@ import {
   BadgeCheck,
   Headphones,
   Package,
-  ShoppingBag,
   Sparkles,
-  Tag,
+  Tag
 } from "lucide-react";
 import { motion, useInView, useReducedMotion } from "motion/react";
 import Image from "next/image";
@@ -70,7 +69,7 @@ export function ForWholesellers({
       />
 
       {/* ── Media: full-bleed to viewport right; fills entire right column ── */}
-      <div className="absolute inset-x-0 bottom-0 z-0 h-[46%] lg:inset-y-0 lg:left-auto lg:right-0 lg:h-auto lg:w-1/2 xl:w-[52%]">
+      <div className="absolute inset-x-0 bottom-0 z-0 h-[56%] lg:inset-y-0 lg:left-auto lg:right-0 lg:h-auto lg:w-1/2 xl:w-[52%]">
         <svg
           className="pointer-events-none absolute inset-0 z-20 hidden h-full w-full overflow-visible lg:block"
           viewBox="0 0 1000 700"
@@ -80,7 +79,7 @@ export function ForWholesellers({
           <motion.path
             d={ARC_PATH}
             fill="none"
-            stroke="var(--primary)"
+            stroke="var(--primary-dark)"
             strokeWidth="1.5"
             strokeOpacity="0.55"
             vectorEffect="non-scaling-stroke"
@@ -122,7 +121,7 @@ export function ForWholesellers({
         </motion.div>
 
         <motion.div
-          className="absolute right-4 bottom-5 z-30 max-w-44 border border-primary/40 bg-foreground/85 px-3.5 py-3 backdrop-blur-sm sm:right-6 sm:bottom-8 sm:max-w-48 sm:px-5 sm:py-4 lg:bottom-10"
+          className="absolute inset-x-1/2 right-auto left-1/2 -translate-x-1/2 sm:inset-x-auto sm:left-auto sm:right-6 bottom-5 z-30 max-w-44 border border-primary/40 bg-foreground/85 px-3.5 py-3 backdrop-blur-sm flex flex-col items-center sm:items-start sm:max-w-48 sm:px-5 sm:py-4 sm:bottom-8 lg:bottom-10"
           initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
           animate={
             shouldAnimate || prefersReducedMotion
@@ -131,33 +130,23 @@ export function ForWholesellers({
           }
           transition={{ duration: 0.6, delay: 0.65, ease: EASE }}
         >
-          <Sparkles className="mb-1.5 size-3.5 text-primary" strokeWidth={1.5} aria-hidden />
-          <p className="text-[9px] tracking-[0.22em] text-primary/90 uppercase">Trusted By</p>
-          <p className="font-heading mt-0.5 text-3xl font-semibold tracking-tight text-primary sm:text-4xl">
+          <Sparkles className="mb-1.5 size-5 text-primary" strokeWidth={1.5} aria-hidden />
+          <p className="text-[10px] md:text-xs tracking-[0.22em] text-primary/90 uppercase text-center sm:text-left">
+            Trusted By
+          </p>
+          <p className="font-heading mt-0.5 text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-primary text-center sm:text-left">
             500+
           </p>
-          <p className="mt-0.5 text-[9px] tracking-[0.18em] text-primary/80 uppercase">
+          <p className="mt-0.5 text-[10px] md:text-xs tracking-[0.18em] text-primary/80 uppercase text-center sm:text-left">
             Businesses Worldwide
           </p>
         </motion.div>
+
       </div>
 
       {/* ── Content: stays inside max-w-7xl ── */}
-      <div className="relative z-10 mx-auto min-h-128 max-w-7xl px-5 sm:px-8 lg:min-h-144 lg:px-12 xl:px-16">
+      <div className="relative z-10 mx-auto min-h-[1000px] sm:min-h-[800px] max-w-7xl px-5 sm:px-8 lg:min-h-144 lg:px-12 xl:px-16">
         <div className="flex max-w-xl flex-col justify-center py-14 sm:py-16 lg:min-h-144 lg:max-w-md xl:max-w-lg">
-          <motion.div
-            className="mb-5 flex size-12 items-center justify-center rounded-full border border-primary-dark text-primary-dark"
-            initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85 }}
-            animate={
-              shouldAnimate || prefersReducedMotion
-                ? { opacity: 1, scale: 1 }
-                : { opacity: 0, scale: 0.85 }
-            }
-            transition={{ duration: 0.55, ease: EASE }}
-          >
-            <ShoppingBag className="size-5 text-primary-dark" strokeWidth={1.5} aria-hidden />
-          </motion.div>
-
           <motion.div
             initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             animate={
@@ -204,7 +193,7 @@ export function ForWholesellers({
                   },
                 }}
               >
-                <Icon className="size-5 text-primary" strokeWidth={1.5} aria-hidden />
+                <Icon className="size-5 text-primary-dark" strokeWidth={1.5} aria-hidden />
                 <span className="max-w-30 text-[10px] font-semibold tracking-[0.14em] text-foreground/80 uppercase sm:text-[11px]">
                   {label}
                 </span>

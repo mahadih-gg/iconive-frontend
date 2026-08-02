@@ -33,18 +33,16 @@ export function HomeView() {
         <div className="flex flex-wrap justify-center gap-4">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-72 w-44" />
-              ))
+              <Skeleton key={i} className="h-72 w-44" />
+            ))
             : trending.slice(0, 8).map((p) => (
-                <ProductCard key={p._id} product={p} className="w-[47%] md:w-56" />
-              ))}
+              <ProductCard key={p._id} product={p} className="w-[47%] md:w-56" />
+            ))}
         </div>
       </section>
 
-      <WhyChooseUs />
-
       <ForWholesellers />
-
+      <WhyChooseUs />
       <CustomerReviews />
 
       <FloatingWhatsApp

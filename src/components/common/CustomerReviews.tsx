@@ -74,7 +74,7 @@ function ReviewCard({ review }: ReviewCardProps) {
   return (
     <article
       className={cn(
-        "relative flex w-72 shrink-0 flex-col bg-primary/5 backdrop-blur-sm sm:w-80 p-4 md:p-6 border-2 border-primary-dark/40"
+        "relative flex w-72 shrink-0 flex-col bg-primary/5 backdrop-blur-sm sm:w-80 p-4 md:p-6 border-2 border-primary-dark/20"
       )}
     >
       <span

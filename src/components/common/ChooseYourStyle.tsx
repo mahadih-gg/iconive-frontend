@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BsArrowRight } from "react-icons/bs";
 
+import GlareHover from "@/components/GlareHover";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import { TrustMarker } from "@/components/common/TrustMarker";
 import { Button } from "@/components/ui/button";
@@ -18,23 +19,6 @@ const STYLE_CATEGORIES = [
     image: "/Image/ImagesPage/gents.webp",
     cta: "Explore Gents",
     ctaVariant: "outline" as const,
-    markers: [
-      {
-        icon: "/Image/ImagesPage/award-icon.svg",
-        title: "Premium Quality",
-        desc: "100% Human Hair",
-      },
-      {
-        icon: "/Image/ImagesPage/natural-look.svg",
-        title: "Natural Look",
-        desc: "Undetectable Finish",
-      },
-      {
-        icon: "/Image/ImagesPage/shield.svg",
-        title: "Long Lasting",
-        desc: "Durable & Stylish",
-      },
-    ],
   },
   {
     key: "ladies",
@@ -45,23 +29,6 @@ const STYLE_CATEGORIES = [
     image: "/Image/ImagesPage/ladies.webp",
     cta: "Explore Ladies",
     ctaVariant: "solid" as const,
-    markers: [
-      {
-        icon: "/Image/ImagesPage/luxurious-hair.svg",
-        title: "Luxurious Hair",
-        desc: "Soft & Natural Feel",
-      },
-      {
-        icon: "/Image/ImagesPage/dimond.svg",
-        title: "Trending Styles",
-        desc: "Stay Ahead Always",
-      },
-      {
-        icon: "/Image/ImagesPage/love.svg",
-        title: "Confidence Boost",
-        desc: "Look & Feel Your Best",
-      },
-    ],
   },
 ] as const;
 
@@ -90,75 +57,68 @@ export function ChooseYourStyle() {
         <SectionHeader
           className="mb-10 sm:mb-12"
           label="Made For Every Look"
-          heading="Choose Your Style"
+          heading="Choose Your"
+          heading2="Style"
           paragraph="Premium wigs, perfectly crafted for every you."
         />
 
         <div className="grid gap-5 lg:grid-cols-2 lg:gap-6">
           {STYLE_CATEGORIES.map((category) => (
-            <article
+            <GlareHover
               key={category.key}
-              className="group relative min-h-112 overflow-hidden rounded-2xl sm:min-h-128"
+              width="100%"
+              height="100%"
+              background="transparent"
+              borderColor="transparent"
+              borderRadius="1rem"
+              glareColor="#ffffff"
+              glareOpacity={0.4}
+              glareSize={280}
+              transitionDuration={800}
+              className="group min-h-112 border-0 sm:min-h-128"
             >
-              <Image
-                src={category.image}
-                alt={category.title}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-black/15" />
+              <article className="relative min-h-112 w-full overflow-hidden rounded-2xl sm:min-h-128">
+                <Image
+                  src={category.image}
+                  alt={category.title}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-black/15" />
 
-              <div className="relative z-10 flex h-full min-h-112 flex-col p-6 pb-28 sm:min-h-128 sm:p-8 sm:pb-32">
-                <div className="max-w-sm pt-2">
-                  <p className="relative inline-block font-heading text-xs tracking-[0.22em] text-primary uppercase sm:text-sm">
-                    {category.eyebrow}
-                    <span className="absolute left-[calc(100%+8px)] top-1/3  h-px w-7 bg-primary" />
-                  </p>
+                <div className="absolute inset-0 z-10 flex flex-col p-6 sm:p-8">
+                  <div className="flex h-full max-w-sm flex-col items-start justify-between pt-2">
+                    <div>
+                      <p className="inline-block font-heading text-xs tracking-[0.22em] text-primary uppercase sm:text-sm">
+                        {category.eyebrow}
+                      </p>
 
-                  <h3 className="font-heading mt-4 md:mt-8 text-4xl font-medium tracking-[0.04em] text-white uppercase sm:text-5xl">
-                    {category.title}
-                  </h3>
+                      <h3 className="font-heading mt-2 text-4xl font-medium tracking-[0.04em] text-white uppercase sm:text-5xl md:mt-4">
+                        {category.title}
+                      </h3>
 
-                  <span className="mt-3 block h-px w-12 bg-primary" aria-hidden />
-                  <p className="mt-4 md:mt-8 text-sm md:text-base leading-relaxed text-white/85 max-w-[250px]">
-                    {category.description}
-                  </p>
-
-                  <Button
-                    variant={category.ctaVariant === "solid" ? "cta" : "ctaOutline"}
-                    size="ctaSm"
-                    className="mt-4 md:mt-8"
-                    asChild
-                  >
-                    <Link href={category.href}>
-                      {category.cta}
-                      <span data-slot="button-arrow" aria-hidden>
-                        <BsArrowRight />
-                      </span>
-                    </Link>
-                  </Button>
+                      <span className="mt-3 block h-px w-12 bg-primary" aria-hidden />
+                      <p className="mt-4 max-w-[250px] text-sm leading-relaxed text-white/85 md:mt-8 md:text-base">
+                        {category.description}
+                      </p>
+                    </div>
+                    <Button
+                      variant={category.ctaVariant === "solid" ? "cta" : "ctaOutline"}
+                      size="ctaSm"
+                      asChild
+                    >
+                      <Link href={category.href}>
+                        {category.cta}
+                        <span data-slot="button-arrow" aria-hidden>
+                          <BsArrowRight />
+                        </span>
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
-              </div>
-
-              <div className="absolute inset-x-0 bottom-0 z-20 w-full bg-black/10 px-4 py-4 backdrop-blur-sm sm:px-5 sm:py-5">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-0">
-                  {category.markers.map((marker, index) => (
-                    <TrustMarker
-                      key={marker.title}
-                      icon={marker.icon}
-                      title={marker.title}
-                      desc={marker.desc}
-                      className={cn(
-                        index < category.markers.length - 1 &&
-                        "sm:border-r sm:border-white/25 sm:pr-4",
-                        index > 0 && "sm:pl-4"
-                      )}
-                    />
-                  ))}
-                </div>
-              </div>
-            </article>
+              </article>
+            </GlareHover>
           ))}
         </div>
 
