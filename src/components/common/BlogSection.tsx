@@ -13,7 +13,7 @@ interface BlogSectionProps {
 
 export function BlogSection({ className }: BlogSectionProps) {
   return (
-    <section className={cn("bg-background px-4 py-16 sm:py-20", className)}>
+    <section className={cn("bg-background px-4 py-8 sm:py-10", className)}>
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           className="mb-10 sm:mb-12"
