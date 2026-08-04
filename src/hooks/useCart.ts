@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { toast } from "sonner";
 
@@ -9,17 +10,37 @@ import { useUiStore } from "@/store/ui.store";
 import type { CartItem } from "@/types/cart.type";
 
 export function useCart() {
-  const { items, badgeCount, addItem, removeItem, updateQuantity, clearCart } =
-    useCartStore(
+  const {
+    items,
+    badgeCount,
+    isHydrated,
+    addItem,
+    removeItem,
+    updateQuantity,
+    clearCart,
+    setHydrated,
+  } = useCartStore(
       useShallow((s) => ({
         items: s.items,
         badgeCount: s.badgeCount,
+        isHydrated: s.isHydrated,
         addItem: s.addItem,
         removeItem: s.removeItem,
         updateQuantity: s.updateQuantity,
         clearCart: s.clearCart,
+        setHydrated: s.setHydrated,
       })),
     );
+
+  useEffect(() => {
+    if (useCartStore.persist.hasHydrated()) {
+      setHydrated(true);
+      return;
+    }
+    return useCartStore.persist.onFinishHydration(() => {
+      setHydrated(true);
+    });
+  }, [setHydrated]);
 
   const { openCartDrawer, closeCartDrawer, cartDrawerOpen } = useUiStore(
     useShallow((s) => ({
@@ -34,6 +55,7 @@ export function useCart() {
   return {
     items,
     badgeCount,
+    isHydrated,
     total,
     cartDrawerOpen,
     openCartDrawer,
@@ -43,8 +65,8 @@ export function useCart() {
       toast.success("Added to cart");
       openCartDrawer();
     },
-    removeFromCart: (productId: string) => {
-      removeItem(productId);
+    removeFromCart: (lineKey: string) => {
+      removeItem(lineKey);
       toast.success("Removed from cart");
     },
     updateQuantity,

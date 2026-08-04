@@ -26,6 +26,7 @@ import { useProduct } from "@/hooks/useProduct";
 import { useWishlist } from "@/hooks/useWishlist";
 import type { CartAddon } from "@/types/cart.type";
 import type { Product } from "@/types/product.type";
+import { getCartLineKey } from "@/utils/cart-line";
 import {
   COLOR_OPTIONS,
   DENSITY_OPTIONS,
@@ -117,7 +118,31 @@ export function ProductDetailView() {
   }, [product, selectedAddOns]);
 
   const totalPrice = unitPrice * quantity;
-  const inCart = items.some((i) => i.product === id);
+
+  const currentLineKey = useMemo(() => {
+    if (!id) return "";
+    const sizeAddon: CartAddon = {
+      name: "Cap Size",
+      value: SIZE_OPTIONS[selectedSize],
+    };
+    return getCartLineKey({
+      product: id,
+      color: COLOR_OPTIONS[selectedColor]?.label,
+      length: LENGTH_OPTIONS[selectedLength],
+      density: DENSITY_OPTIONS[selectedDensity],
+      size: SIZE_OPTIONS[selectedSize],
+      addons: [...selectedAddOns, sizeAddon],
+    });
+  }, [
+    id,
+    selectedColor,
+    selectedLength,
+    selectedDensity,
+    selectedSize,
+    selectedAddOns,
+  ]);
+
+  const inCart = items.some((item) => getCartLineKey(item) === currentLineKey);
   const inWishlist = isInWishlist(id);
 
   const relatedProducts = useMemo(() => {
@@ -148,7 +173,7 @@ export function ProductDetailView() {
   function handleCartToggle() {
     if (!product) return;
     if (inCart) {
-      removeFromCart(product._id);
+      removeFromCart(currentLineKey);
       return;
     }
 
@@ -167,6 +192,7 @@ export function ProductDetailView() {
       color: COLOR_OPTIONS[selectedColor]?.label,
       length: LENGTH_OPTIONS[selectedLength],
       density: DENSITY_OPTIONS[selectedDensity],
+      size: SIZE_OPTIONS[selectedSize],
       addons: [...selectedAddOns, sizeAddon],
     });
   }

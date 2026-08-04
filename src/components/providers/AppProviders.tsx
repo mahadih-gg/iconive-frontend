@@ -36,6 +36,9 @@ function AuthHydrator({ children }: { children: ReactNode }) {
             amount: item.amount,
             image: item.image,
             color: item.color,
+            length: item.length,
+            density: item.density,
+            size: item.size,
             addons: item.addons,
           })),
         );

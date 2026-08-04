@@ -134,6 +134,7 @@ export function QuickProductView({
       color: COLOR_OPTIONS[selectedColor]?.label,
       length: LENGTH_OPTIONS[selectedLength],
       density: DENSITY_OPTIONS[selectedDensity],
+      size: SIZE_OPTIONS[selectedSize],
       addons: [
         {
           name: "Cap Size",

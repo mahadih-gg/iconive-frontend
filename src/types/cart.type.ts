@@ -13,5 +13,6 @@ export interface CartItem {
   color?: string | Record<string, unknown>;
   length?: string;
   density?: string;
+  size?: string;
   addons?: CartAddon[];
 }
