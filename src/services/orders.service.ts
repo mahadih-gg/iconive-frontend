@@ -1,6 +1,8 @@
 import {
   createOrderDummy,
   createPaymentDummy,
+  createRefundRequestDummy,
+  getOrderByIdDummy,
   ordersActiveDummy,
   ordersCancelledDummy,
   ordersHistoryDummy,
@@ -31,16 +33,29 @@ export const ordersService = {
       return Array.isArray(data) ? data : [];
     });
   },
+  getById: async (id: string): Promise<Order> => {
+    // DUMMY_DATA: remove when backend is ready
+    return withDummyData(
+      () => {
+        const order = getOrderByIdDummy(id);
+        if (!order) throw new Error("Order not found");
+        return order;
+      },
+      async () => {
+        const { data } = await api.get<Order>(`/order/${id}`);
+        return data;
+      },
+    );
+  },
   getItem: async (orderItemId: string): Promise<OrderItem> => {
     // DUMMY_DATA: remove when backend is ready
     return withDummyData(
-      () =>
-        ({
-          _id: orderItemId,
-          name: "Dummy Order Item",
-          price: 100,
-          quantity: 1,
-        }) satisfies OrderItem,
+      (): OrderItem => ({
+        _id: orderItemId,
+        name: "Dummy Order Item",
+        price: 100,
+        quantity: 1,
+      }),
       async () => {
         const { data } = await api.get<OrderItem>(
           `/orderItem/getOne/${orderItemId}`,
@@ -65,6 +80,24 @@ export const ordersService = {
       () => ({ _id: id, ...payload }) as Order,
       async () => {
         const { data } = await api.put<Order>(`/order/${id}`, payload);
+        return data;
+      },
+    );
+  },
+  requestRefund: async (payload: {
+    orderId: string;
+    reason: string;
+    notes?: string;
+  }): Promise<Order> => {
+    // DUMMY_DATA: remove when backend is ready
+    return withDummyData(
+      () => {
+        const order = createRefundRequestDummy(payload);
+        if (!order) throw new Error("Order not found");
+        return order;
+      },
+      async () => {
+        const { data } = await api.post<Order>("/order/refund", payload);
         return data;
       },
     );

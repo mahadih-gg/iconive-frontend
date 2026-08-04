@@ -63,7 +63,7 @@ export function NavActions({ tone = "default" }: NavActionsProps) {
         variant="ghost"
         size="icon"
         className={cn(isGlass && "text-white hover:bg-white/10 hover:text-white")}
-        onClick={() => router.push("/profile?sidebar=4")}
+        onClick={() => router.push("/profile/wishlist")}
         aria-label="Wishlist"
       >
         <FaRegHeart className="h-5 w-5" />

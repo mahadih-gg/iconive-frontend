@@ -6,10 +6,7 @@ import {
   Info,
   Minus,
   Plus,
-  RotateCcw,
-  ShieldCheck,
-  ShoppingCart,
-  Truck,
+  ShoppingCart
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -89,13 +86,6 @@ function OptionButton({
     </button>
   );
 }
-
-const TRUST_ITEMS = [
-  { icon: Truck, label: "Free shipping" },
-  { icon: ShieldCheck, label: "Secure checkout" },
-  { icon: RotateCcw, label: "Easy returns" },
-  { icon: Clock, label: "15–20 business days" },
-] as const;
 
 export function ProductPurchasePanel({
   product,
@@ -378,20 +368,6 @@ export function ProductPurchasePanel({
             />
           </Button>
         ) : null}
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {TRUST_ITEMS.map(({ icon: Icon, label }) => (
-          <div
-            key={label}
-            className="flex flex-col items-center gap-1.5 border border-primary-dark/15 bg-[#fffcf8] px-2 py-3 text-center"
-          >
-            <Icon className="size-4 text-primary-dark" aria-hidden />
-            <span className="font-heading text-[10px] font-semibold tracking-wide text-foreground uppercase sm:text-[11px]">
-              {label}
-            </span>
-          </div>
-        ))}
       </div>
 
       <Accordion type="single" collapsible className="border-t border-border">

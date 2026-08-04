@@ -1,3 +1,5 @@
+import type { AddressBookEntry } from "@/types/address.type";
+
 export interface AuthUser {
   id?: string;
   _id?: string;
@@ -7,6 +9,9 @@ export interface AuthUser {
   role?: string;
   phone?: string;
   address?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  addresses?: AddressBookEntry[];
 }
 
 export interface LoginPayload {
