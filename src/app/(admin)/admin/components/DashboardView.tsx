@@ -155,27 +155,27 @@ export function DashboardView() {
         <CardHeader>
           <CardTitle>Recent orders</CardTitle>
         </CardHeader>
-        <CardContent className="overflow-x-auto">
-          <Table>
+        <CardContent className="min-w-0 overflow-x-auto">
+          <Table className="w-full table-fixed">
             <TableHeader>
               <TableRow>
-                <TableHead>Order</TableHead>
+                <TableHead className="w-24">Order</TableHead>
                 <TableHead>Customer</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Total</TableHead>
+                <TableHead className="w-36">Status</TableHead>
+                <TableHead className="w-28">Total</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {data.recentOrders.map((order) => (
                 <TableRow key={order._id}>
-                  <TableCell className="font-mono text-xs">
+                  <TableCell className="truncate font-mono text-xs">
                     {order._id.slice(-8)}
                   </TableCell>
-                  <TableCell>{order.customerName}</TableCell>
+                  <TableCell className="truncate">{order.customerName}</TableCell>
                   <TableCell>
                     <StatusBadge status={order.status} />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="truncate">
                     {order.currency} {order.total}
                   </TableCell>
                 </TableRow>

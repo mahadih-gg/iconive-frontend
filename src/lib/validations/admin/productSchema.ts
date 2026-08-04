@@ -5,7 +5,7 @@ export const productFormSchema = z.object({
   description: z.string().optional(),
   price: z.coerce.number().min(0, "Price must be 0 or greater"),
   discount: z.coerce.number().min(0).max(100).optional(),
-  images: z.string().min(1, "At least one image URL is required"),
+  images: z.array(z.string().min(1)).min(1, "At least one image is required"),
   categoryId: z.string().min(1, "Category is required"),
   subCategoryId: z.string().optional(),
   stock: z.coerce.number().int().min(0, "Stock must be 0 or greater"),

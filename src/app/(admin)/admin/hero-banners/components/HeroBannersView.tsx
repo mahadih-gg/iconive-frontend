@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { PlusIcon } from "lucide-react";
-import Image from "next/image";
 
 import { AdminDataTable } from "@/components/admin/shared/AdminDataTable";
 import { AdminFormSheet } from "@/components/admin/shared/AdminFormSheet";
@@ -96,36 +95,29 @@ export function HeroBannersView() {
           {
             key: "image",
             header: "Preview",
-            cell: (row) => (
-              <div className="relative h-12 w-20 overflow-hidden border border-border bg-muted">
-                <Image
+            className: "w-28",
+            cell: (row) =>
+              row.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
                   src={row.image}
                   alt=""
-                  fill
-                  className="object-cover"
-                  sizes="80px"
+                  className="size-12 object-cover"
                 />
-              </div>
-            ),
-          },
-          {
-            key: "imageUrl",
-            header: "Image URL",
-            hideOnMobile: true,
-            cell: (row) => (
-              <span className="max-w-xs truncate text-sm text-muted-foreground">
-                {row.image}
-              </span>
-            ),
+              ) : (
+                <span className="text-xs text-muted-foreground">—</span>
+              ),
           },
           {
             key: "sortOrder",
             header: "Order",
+            className: "w-24",
             cell: (row) => row.sortOrder,
           },
           {
             key: "status",
             header: "Status",
+            className: "w-32",
             cell: (row) => (
               <StatusBadge status={row.isActive ? "active" : "inactive"} />
             ),
@@ -133,7 +125,7 @@ export function HeroBannersView() {
           {
             key: "actions",
             header: "",
-            className: "w-12 text-right",
+            className: "w-14 text-right",
             cell: (row) => (
               <RowActions
                 onEdit={() => openEdit(row._id)}

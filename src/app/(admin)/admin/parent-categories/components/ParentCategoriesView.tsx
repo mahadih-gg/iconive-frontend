@@ -110,6 +110,7 @@ export function ParentCategoriesView() {
           {
             key: "image",
             header: "Image",
+            className: "w-16",
             cell: (row) =>
               row.image ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -126,21 +127,25 @@ export function ParentCategoriesView() {
             key: "name",
             header: "Name",
             cell: (row) => (
-              <div className="flex flex-col gap-1">
-                <span className="font-medium">{row.name}</span>
-                <span className="text-xs text-muted-foreground">{row.slug}</span>
+              <div className="flex min-w-0 flex-col gap-1">
+                <span className="truncate font-medium">{row.name}</span>
+                <span className="truncate text-xs text-muted-foreground">
+                  {row.slug}
+                </span>
               </div>
             ),
           },
           {
             key: "sortOrder",
             header: "Order",
+            className: "w-24",
             hideOnMobile: true,
             cell: (row) => row.sortOrder,
           },
           {
             key: "status",
             header: "Status",
+            className: "w-32",
             cell: (row) => (
               <StatusBadge status={row.isActive ? "active" : "inactive"} />
             ),
@@ -148,7 +153,7 @@ export function ParentCategoriesView() {
           {
             key: "actions",
             header: "",
-            className: "w-12 text-right",
+            className: "w-14 text-right",
             cell: (row) => (
               <RowActions
                 onEdit={() => openEdit(row._id)}

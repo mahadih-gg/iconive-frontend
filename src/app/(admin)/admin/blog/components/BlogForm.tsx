@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { ImageUploadField } from "@/components/admin/shared/ImageUploadField";
 import {
   Field,
   FieldDescription,
@@ -20,7 +21,7 @@ const schema = z.object({
   category: z.string().min(1, "Category is required"),
   title: z.string().min(1, "Title is required"),
   excerpt: z.string().min(1, "Excerpt is required"),
-  image: z.string().min(1, "Image URL is required"),
+  image: z.string().min(1, "Image is required"),
   slug: z.string().min(1, "Slug is required"),
   body: z.string().min(1, "Body is required"),
   published: z.boolean(),
@@ -105,11 +106,13 @@ export function BlogForm({
         </Field>
 
         <Field data-invalid={!!form.formState.errors.image}>
-          <FieldLabel htmlFor="blog-image">Image URL</FieldLabel>
-          <Input
-            id="blog-image"
-            aria-invalid={!!form.formState.errors.image}
-            {...form.register("image")}
+          <FieldLabel>Image</FieldLabel>
+          <ImageUploadField
+            value={form.watch("image")}
+            onChange={(value) =>
+              form.setValue("image", value, { shouldValidate: true })
+            }
+            label="Upload cover"
           />
           <FieldError>{form.formState.errors.image?.message}</FieldError>
         </Field>

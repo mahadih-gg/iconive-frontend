@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { ImageUploadField } from "@/components/admin/shared/ImageUploadField";
 import {
   Field,
   FieldError,
@@ -18,7 +19,7 @@ const schema = z.object({
   label: z.string().min(1, "Label is required"),
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
-  image: z.string().min(1, "Image URL is required"),
+  image: z.string().min(1, "Image is required"),
   isActive: z.boolean(),
 });
 
@@ -72,11 +73,13 @@ export function AffiliateProgramForm({
           <FieldError>{form.formState.errors.description?.message}</FieldError>
         </Field>
         <Field data-invalid={!!form.formState.errors.image}>
-          <FieldLabel htmlFor="program-image">Image URL</FieldLabel>
-          <Input
-            id="program-image"
-            aria-invalid={!!form.formState.errors.image}
-            {...form.register("image")}
+          <FieldLabel>Image</FieldLabel>
+          <ImageUploadField
+            value={form.watch("image")}
+            onChange={(value) =>
+              form.setValue("image", value, { shouldValidate: true })
+            }
+            label="Upload image"
           />
           <FieldError>{form.formState.errors.image?.message}</FieldError>
         </Field>

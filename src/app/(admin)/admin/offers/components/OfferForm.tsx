@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { ImageUploadField } from "@/components/admin/shared/ImageUploadField";
 import {
   Field,
   FieldContent,
@@ -124,13 +125,13 @@ export function OfferForm({
         </div>
 
         <Field data-invalid={!!form.formState.errors.bannerImage}>
-          <FieldLabel htmlFor="offer-banner">Banner image URL</FieldLabel>
-          <Input
-            id="offer-banner"
-            className="rounded-none"
-            placeholder="/Image/..."
-            aria-invalid={!!form.formState.errors.bannerImage}
-            {...form.register("bannerImage")}
+          <FieldLabel>Banner image</FieldLabel>
+          <ImageUploadField
+            value={form.watch("bannerImage") ?? ""}
+            onChange={(value) =>
+              form.setValue("bannerImage", value, { shouldValidate: true })
+            }
+            label="Upload banner"
           />
           <FieldError>{form.formState.errors.bannerImage?.message}</FieldError>
         </Field>

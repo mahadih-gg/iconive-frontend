@@ -36,7 +36,7 @@ const createDefaults: ProductFormValues = {
   description: "",
   price: 0,
   discount: 0,
-  images: "",
+  images: [],
   categoryId: "",
   subCategoryId: "",
   stock: 0,
@@ -50,20 +50,13 @@ function toFormValues(product: AdminProduct): ProductFormValues {
     description: product.description ?? "",
     price: product.price,
     discount: product.discount ?? 0,
-    images: product.images.join(", "),
+    images: product.images,
     categoryId: product.categoryId,
     subCategoryId: product.subCategoryId ?? "",
     stock: product.stock,
     isFeatured: product.isFeatured,
     available: product.available,
   };
-}
-
-function parseImages(value: string): string[] {
-  return value
-    .split(",")
-    .map((url) => url.trim())
-    .filter(Boolean);
 }
 
 export function ProductsView() {
@@ -118,7 +111,7 @@ export function ProductsView() {
       description: values.description || undefined,
       price: values.price,
       discount: values.discount || 0,
-      images: parseImages(values.images),
+      images: values.images.filter(Boolean),
       categoryId: values.categoryId,
       subCategoryId: values.subCategoryId || undefined,
       stock: values.stock,

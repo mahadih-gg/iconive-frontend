@@ -4,11 +4,11 @@ import { useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { MultiImageUploadField } from "@/components/admin/shared/MultiImageUploadField";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Field,
   FieldContent,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -126,15 +126,13 @@ export function ProductForm({
         </div>
 
         <Field data-invalid={!!form.formState.errors.images}>
-          <FieldLabel htmlFor="product-images">Images</FieldLabel>
-          <Input
-            id="product-images"
-            className="rounded-none"
-            placeholder="/Image/a.webp, /Image/b.webp"
-            aria-invalid={!!form.formState.errors.images}
-            {...form.register("images")}
+          <FieldLabel>Images</FieldLabel>
+          <MultiImageUploadField
+            value={form.watch("images")}
+            onChange={(images) =>
+              form.setValue("images", images, { shouldValidate: true })
+            }
           />
-          <FieldDescription>Comma-separated image URLs</FieldDescription>
           <FieldError>{form.formState.errors.images?.message}</FieldError>
         </Field>
 

@@ -115,6 +115,7 @@ export function CategoriesView() {
           {
             key: "image",
             header: "Image",
+            className: "w-16",
             cell: (row) =>
               row.image ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -131,15 +132,18 @@ export function CategoriesView() {
             key: "name",
             header: "Name",
             cell: (row) => (
-              <div className="flex flex-col gap-1">
-                <span className="font-medium">{row.name}</span>
-                <span className="text-xs text-muted-foreground">{row.slug}</span>
+              <div className="flex min-w-0 flex-col gap-1">
+                <span className="truncate font-medium">{row.name}</span>
+                <span className="truncate text-xs text-muted-foreground">
+                  {row.slug}
+                </span>
               </div>
             ),
           },
           {
             key: "parent",
             header: "Parent",
+            className: "w-36",
             hideOnMobile: true,
             cell: (row) =>
               row.parentId ? (
@@ -153,12 +157,14 @@ export function CategoriesView() {
           {
             key: "sortOrder",
             header: "Order",
+            className: "w-20",
             hideOnMobile: true,
             cell: (row) => row.sortOrder,
           },
           {
             key: "status",
             header: "Status",
+            className: "w-28",
             cell: (row) => (
               <StatusBadge status={row.isActive ? "active" : "inactive"} />
             ),
@@ -166,7 +172,7 @@ export function CategoriesView() {
           {
             key: "actions",
             header: "",
-            className: "w-12 text-right",
+            className: "w-14 text-right",
             cell: (row) => (
               <RowActions
                 onEdit={() => openEdit(row._id)}
