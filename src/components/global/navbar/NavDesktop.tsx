@@ -14,7 +14,7 @@ const NAV_LINKS = [
   { href: "/offers", label: "OFFERS", match: ["/offers"] },
   { href: "/joinus", label: "JOIN US", match: ["/joinus"] },
   { href: "/blog", label: "BLOG", match: ["/blog"] },
-  { href: "/wholesale", label: "WHOLESALE", match: ["/wholesale"], accent: true },
+  { href: "/wholesale", label: "WHOLESALE", match: ["/wholesale"] },
 ] as const;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -34,7 +34,10 @@ interface NavDesktopProps {
 }
 
 function isActive(pathname: string, match: readonly string[]) {
-  return match.some((m) => (m === "/" ? pathname === "/" || pathname === "/home" : pathname.startsWith(m)));
+  return match.some((m) => {
+    if (m === "/") return pathname === "/" || pathname === "/home";
+    return pathname === m || pathname.startsWith(`${m}/`);
+  });
 }
 
 export function NavDesktop({
@@ -51,9 +54,8 @@ export function NavDesktop({
     <nav className="mx-auto hidden items-center gap-4 lg:flex">
       {NAV_LINKS.map((link) => {
         const active = isActive(pathname, link.match);
-        const isAccent = "accent" in link && link.accent;
         const isShop = "hasDropdown" in link && link.hasDropdown;
-        const isHighlighted = active || (isShop && shopOpen) || isAccent;
+        const isHighlighted = active || (isShop && shopOpen);
 
         return (
           <MotionLink

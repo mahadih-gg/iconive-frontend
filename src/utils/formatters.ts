@@ -12,6 +12,14 @@ export function formatCurrency(amount: number, currency: string): string {
   }
 }
 
+export function formatAdminDate(value: string): string {
+  return new Date(value).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
 export function convertForDisplay(currency: string, amount: number): string {
   if (currency === "USD") {
     const converted = amount / env.fxRate;

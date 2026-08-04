@@ -7,8 +7,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "sonner";
 
-import { CartDrawer } from "@/components/global/cart-drawer";
-import { Navbar } from "@/components/global/navbar";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+
 import env from "@/lib/env";
 import { queryClient } from "@/lib/queryClient";
 import { useAuthStore } from "@/store/auth.store";
@@ -54,19 +54,20 @@ function AuthHydrator({ children }: { children: ReactNode }) {
 export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <GoogleOAuthProvider clientId={env.googleClientId}>
-        <HelmetProvider>
-          <AuthHydrator>
-            <Navbar />
-            <CartDrawer />
-            {children}
-          </AuthHydrator>
-        </HelmetProvider>
-      </GoogleOAuthProvider>
-      <Toaster richColors theme="light" position="top-right" />
-      {process.env.NODE_ENV === "development" ? (
-        <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
-      ) : null}
+      <NuqsAdapter>
+        <GoogleOAuthProvider clientId={env.googleClientId}>
+          <HelmetProvider>
+            <AuthHydrator>{children}</AuthHydrator>
+          </HelmetProvider>
+        </GoogleOAuthProvider>
+        <Toaster richColors theme="light" position="top-right" />
+        {process.env.NODE_ENV === "development" ? (
+          <ReactQueryDevtools
+            initialIsOpen={false}
+            buttonPosition="bottom-left"
+          />
+        ) : null}
+      </NuqsAdapter>
     </QueryClientProvider>
   );
 }
