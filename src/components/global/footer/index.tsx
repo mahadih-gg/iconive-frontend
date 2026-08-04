@@ -1,54 +1,76 @@
 "use client";
 
+import { Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+
 import {
-  Facebook,
-  Instagram,
-  Linkedin,
-  MapPin,
-  MessageCircle,
-  Twitter,
-  Youtube,
-} from "lucide-react";
+  CONTACT_EMAIL,
+  SOCIAL_LINKS,
+} from "@/components/global/navbar/nav-data";
 
-import { Button } from "@/components/ui/button";
-
-const SOCIAL_LINKS = [
-  { href: "https://www.facebook.com/profile.php?id=100087712010768", Icon: Facebook },
-  { href: "https://wa.me/+8801601162155", Icon: MessageCircle },
-  { href: "https://www.instagram.com/iconivewigs/", Icon: Instagram },
-  { href: "https://twitter.com/Iconivewigs", Icon: Twitter },
-  { href: "https://youtube.com/@IconiveWigs?si=m5ojSW2u4XrFVUCE", Icon: Youtube },
-  {
-    href: "https://www.linkedin.com/company/99836837/admin/feed/posts/?feedType=following",
-    Icon: Linkedin,
-  },
+const SHOP_LINKS = [
+  { href: "/products", label: "Shop All" },
+  { href: "/offers", label: "Offers" },
+  { href: "/customize", label: "Customize" },
+  { href: "/wholesale", label: "Wholesale" },
+  { href: "/guideme", label: "Guide Me" },
+  { href: "/blog", label: "Blog" },
 ] as const;
 
-const POLICIES = [
+const POLICY_LINKS = [
   { href: "/privacy", label: "Privacy Policy" },
   { href: "/terms", label: "Terms & Conditions" },
   { href: "/return", label: "Return and Refund" },
   { href: "/shipping", label: "Shipping Policy" },
 ] as const;
 
-const PROFILE_LINKS = [
+const COMPANY_LINKS = [
   { href: "/about", label: "About Us" },
-  { href: "/shippingPartner", label: "Our Shipping Partners" },
-  { href: "/paymentMethod", label: "Payment methods" },
+  { href: "/shippingPartner", label: "Shipping Partners" },
+  { href: "/paymentMethod", label: "Payment Methods" },
   { href: "/faq", label: "FAQ" },
+  { href: "/joinus", label: "Join Us" },
+  { href: "/repair", label: "Repair" },
 ] as const;
+
+function FooterColumn({
+  title,
+  links,
+}: {
+  title: string;
+  links: readonly { href: string; label: string }[];
+}) {
+  return (
+    <div>
+      <p className="font-heading text-[11px] font-semibold tracking-[0.22em] text-primary uppercase">
+        {title}
+      </p>
+      <ul className="mt-4 space-y-2.5">
+        {links.map((item) => (
+          <li key={item.href}>
+            <Link
+              href={item.href}
+              className="text-sm text-white/65 transition-colors hover:text-primary"
+            >
+              {item.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#2a2a2a]">
-      <div className="w-full">
-        <div className="mx-auto max-w-7xl border-b border-border bg-white pb-8">
+    <footer className="w-full bg-[#1a1714] text-white">
+      <div className="border-b border-white/10 bg-[#fffcf8]">
+        <div className="mx-auto max-w-7xl">
           <div className="relative hidden w-full md:block">
             <Image
               src="/Image/banner/payment-banner.jpg"
-              alt="Payment method"
+              alt="Accepted payment methods"
               width={1400}
               height={120}
               className="h-auto w-full"
@@ -57,80 +79,108 @@ export function Footer() {
           <div className="relative block w-full md:hidden">
             <Image
               src="/Image/banner/payment-banner-sm.jpg"
-              alt="Payment method"
+              alt="Accepted payment methods"
               width={600}
               height={200}
               className="h-auto w-full"
             />
           </div>
         </div>
+      </div>
 
-        <div className="mx-auto flex w-full max-w-7xl flex-col justify-between gap-8 px-4 py-10 lg:flex-row lg:px-8">
-          <div className="my-4 text-center lg:my-auto lg:w-1/3 lg:text-left">
-            <h3 className="font-heading text-xl font-bold text-muted-foreground">ICONIVE</h3>
-            <p className="mt-4 flex flex-col items-center gap-1 text-sm text-muted-foreground lg:flex-row lg:items-start">
-              <MapPin className="mt-0.5 h-5 w-5 shrink-0" />
-              <span>
-                Office- 4th floor, house-92, road-15, sector-14, Uttara, Dhaka-1230.
-                Factory- Gouripur, Ashulia, Savar, Dhaka, Bangladesh.
-              </span>
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:py-12 lg:px-8 lg:py-14">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(3,0.8fr)] lg:gap-8 xl:gap-12">
+          <div>
+            <Link href="/" className="inline-block">
+              <h3 className="font-heading text-2xl font-semibold tracking-[0.08em] text-white">
+                ICONIVE
+              </h3>
+            </Link>
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/60">
+              Premium human hair wigs and systems crafted for a natural look,
+              lasting comfort, and everyday confidence.
             </p>
-            <div className="mt-3 flex flex-wrap justify-center gap-2 lg:justify-start">
-              {SOCIAL_LINKS.map(({ href, Icon }) => (
-                <a key={href} href={href} target="_blank" rel="noreferrer">
-                  <Button variant="outline" size="icon" className="rounded-full">
-                    <Icon className="h-4 w-4" />
-                  </Button>
+
+            <ul className="mt-5 space-y-3 text-sm text-white/70">
+              <li className="flex gap-2.5">
+                <MapPin className="mt-0.5 size-4 shrink-0 text-primary" />
+                <span>
+                  Office — 4th floor, house-92, road-15, sector-14, Uttara,
+                  Dhaka-1230.
+                  <br />
+                  Factory — Gouripur, Ashulia, Savar, Dhaka, Bangladesh.
+                </span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Mail className="size-4 shrink-0 text-primary" />
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="transition-colors hover:text-primary"
+                >
+                  {CONTACT_EMAIL}
                 </a>
-              ))}
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Phone className="size-4 shrink-0 text-primary" />
+                <a
+                  href="https://wa.me/message/PIZLMGBXCLUUN1"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="transition-colors hover:text-primary"
+                >
+                  WhatsApp Support
+                </a>
+              </li>
+            </ul>
+
+            <div className="mt-6">
+              <p className="font-heading text-[11px] font-semibold tracking-[0.22em] text-primary uppercase">
+                Follow us
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {SOCIAL_LINKS.map(({ href, Icon, label }) => (
+                  <a
+                    key={href}
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={label}
+                    className="inline-flex size-10 items-center justify-center border border-white/15 bg-white/5 text-white/80 transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
+                  >
+                    <Icon className="size-4" />
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="lg:w-1/3">
-            <div className="mx-auto text-center lg:text-right">
-              <h6 className="pb-3 font-bold text-white">Our Policies</h6>
-              {POLICIES.map((item) => (
-                <Link key={item.href} href={item.href} className="block no-underline">
-                  <p className="text-sm text-muted-foreground hover:text-white">{item.label}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="lg:w-1/3">
-            <div className="mx-auto mt-4 text-center lg:mt-0 lg:text-right">
-              <h6 className="pb-3 font-bold text-white">Our Profile</h6>
-              {PROFILE_LINKS.map((item) => (
-                <Link key={item.href} href={item.href} className="block no-underline">
-                  <p className="text-sm text-muted-foreground hover:text-white">{item.label}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
+          <FooterColumn title="Shop" links={SHOP_LINKS} />
+          <FooterColumn title="Policies" links={POLICY_LINKS} />
+          <FooterColumn title="Company" links={COMPANY_LINKS} />
         </div>
       </div>
 
-      <div className="bg-black py-3 text-center text-white">
-        <p className="m-0 mx-auto text-center text-sm">
-          <span className="mr-2 text-white/50">
-            © All Rights Reserved by{" "}
-            <Link href="/" className="text-white no-underline">
+      <div className="border-t border-white/10">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-center text-xs text-white/45 sm:flex-row sm:text-left lg:px-8 sm:text-sm">
+          <p>
+            © {new Date().getFullYear()}{" "}
+            <Link href="/" className="text-white/70 transition-colors hover:text-primary">
               Iconive Wigs
             </Link>
-          </span>
-          |
-          <span className="ml-2 text-white/50">
+            . All rights reserved.
+          </p>
+          <p>
             Developed by{" "}
-            <a
-              href="https://web.facebook.com/codecatio"
-              className="text-white no-underline"
+            <Link
+              href="https://vizuaal.com"
+              className="text-white/70 transition-colors hover:text-primary"
               target="_blank"
               rel="noreferrer"
             >
-              Codecat.io
-            </a>
-          </span>
-        </p>
+              Vizuaal
+            </Link>
+          </p>
+        </div>
       </div>
     </footer>
   );
