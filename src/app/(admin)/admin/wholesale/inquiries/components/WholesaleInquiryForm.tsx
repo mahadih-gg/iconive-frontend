@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldError,
@@ -21,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import type { AdminWholesaleInquiry } from "@/types/admin";
 
@@ -41,19 +39,19 @@ const createSchema = editSchema.extend({
 export type WholesaleInquiryFormValues = z.infer<typeof createSchema>;
 
 interface WholesaleInquiryFormProps {
+  formId: string;
   mode: "create" | "edit";
   defaultValues: WholesaleInquiryFormValues;
   inquiry?: AdminWholesaleInquiry;
   onSubmit: (values: WholesaleInquiryFormValues) => void | Promise<void>;
-  isSubmitting?: boolean;
 }
 
 export function WholesaleInquiryForm({
+  formId,
   mode,
   defaultValues,
   inquiry,
   onSubmit,
-  isSubmitting,
 }: WholesaleInquiryFormProps) {
   const schema = mode === "create" ? createSchema : editSchema;
 
@@ -63,7 +61,7 @@ export function WholesaleInquiryForm({
   });
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+    <form id={formId} onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
       {mode === "edit" && inquiry ? (
         <FieldGroup className="gap-4">
           <FieldTitle>Inquiry details</FieldTitle>
@@ -152,11 +150,6 @@ export function WholesaleInquiryForm({
           />
           <FieldError>{form.formState.errors.status?.message}</FieldError>
         </Field>
-
-        <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
-          {mode === "create" ? "Create inquiry" : "Save changes"}
-        </Button>
       </FieldGroup>
     </form>
   );

@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldError,
@@ -21,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import type { AdminCustomizeOrder } from "@/types/admin";
 
@@ -45,19 +43,19 @@ const createSchema = editSchema.extend({
 export type CustomizeOrderFormValues = z.infer<typeof createSchema>;
 
 interface CustomizeOrderFormProps {
+  formId: string;
   mode: "create" | "edit";
   defaultValues: CustomizeOrderFormValues;
   request?: AdminCustomizeOrder;
   onSubmit: (values: CustomizeOrderFormValues) => void | Promise<void>;
-  isSubmitting?: boolean;
 }
 
 export function CustomizeOrderForm({
+  formId,
   mode,
   defaultValues,
   request,
   onSubmit,
-  isSubmitting,
 }: CustomizeOrderFormProps) {
   const schema = mode === "create" ? createSchema : editSchema;
 
@@ -67,7 +65,7 @@ export function CustomizeOrderForm({
   });
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+    <form id={formId} onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
       {mode === "edit" && request ? (
         <FieldGroup className="gap-4">
           <FieldTitle>Request details</FieldTitle>
@@ -198,11 +196,6 @@ export function CustomizeOrderForm({
           />
           <FieldError>{form.formState.errors.adminNotes?.message}</FieldError>
         </Field>
-
-        <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
-          {mode === "create" ? "Create request" : "Save changes"}
-        </Button>
       </FieldGroup>
     </form>
   );

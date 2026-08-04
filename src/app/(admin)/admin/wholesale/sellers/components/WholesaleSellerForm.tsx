@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldError,
@@ -19,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
 
 const STATUSES = ["pending", "approved", "rejected"] as const;
 
@@ -34,17 +32,15 @@ const schema = z.object({
 export type WholesaleSellerFormValues = z.infer<typeof schema>;
 
 interface WholesaleSellerFormProps {
+  formId: string;
   defaultValues: WholesaleSellerFormValues;
   onSubmit: (values: WholesaleSellerFormValues) => void | Promise<void>;
-  isSubmitting?: boolean;
-  submitLabel?: string;
 }
 
 export function WholesaleSellerForm({
+  formId,
   defaultValues,
   onSubmit,
-  isSubmitting,
-  submitLabel = "Save",
 }: WholesaleSellerFormProps) {
   const form = useForm<WholesaleSellerFormValues>({
     resolver: zodResolver(schema),
@@ -52,7 +48,7 @@ export function WholesaleSellerForm({
   });
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
+    <form id={formId} onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup>
         <Field data-invalid={!!form.formState.errors.name}>
           <FieldLabel htmlFor="seller-name">Name</FieldLabel>
@@ -103,10 +99,6 @@ export function WholesaleSellerForm({
           />
           <FieldError>{form.formState.errors.status?.message}</FieldError>
         </Field>
-        <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
-          {submitLabel}
-        </Button>
       </FieldGroup>
     </form>
   );

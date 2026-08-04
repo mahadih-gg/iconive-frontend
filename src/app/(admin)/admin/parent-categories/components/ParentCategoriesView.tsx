@@ -9,15 +9,13 @@ import { AdminPageHeader } from "@/components/admin/shared/AdminPageHeader";
 import { ConfirmDeleteDialog } from "@/components/admin/shared/ConfirmDeleteDialog";
 import { RowActions } from "@/components/admin/shared/RowActions";
 import { StatusBadge } from "@/components/admin/shared/StatusBadge";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { CategoryForm } from "@/app/(admin)/admin/categories/components/CategoryForm";
 import { useAdminCategories } from "@/hooks/admin/useAdminResources";
 import { useAdminSheet } from "@/hooks/admin/useAdminSheet";
 import type { CategoryFormValues } from "@/lib/validations/admin/categorySchema";
 import type { AdminCategory } from "@/types/admin";
 import { slugify } from "@/utils/slugify";
-
-import { CategoryForm } from "./CategoryForm";
 
 const createDefaults: CategoryFormValues = {
   name: "",
@@ -33,13 +31,13 @@ function toFormValues(category: AdminCategory): CategoryFormValues {
     name: category.name,
     slug: category.slug || slugify(category.name),
     image: category.image ?? "",
-    parentId: category.parentId ?? "",
+    parentId: "",
     isActive: category.isActive,
     sortOrder: category.sortOrder,
   };
 }
 
-export function CategoriesView() {
+export function ParentCategoriesView() {
   const {
     items,
     isLoading,
@@ -53,23 +51,20 @@ export function CategoriesView() {
   const { isOpen, mode, id, openCreate, openEdit, close } = useAdminSheet();
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const editingItem = useMemo(
-    () => (mode === "edit" && id ? items.find((item) => item._id === id) : undefined),
-    [items, mode, id],
-  );
-
-  const parentOptions = useMemo(
+  const parentCategories = useMemo(
     () =>
-      items.filter(
-        (category) =>
-          category.parentId === null && category._id !== editingItem?._id,
-      ),
-    [items, editingItem],
+      items
+        .filter((category) => category.parentId === null)
+        .sort((a, b) => a.sortOrder - b.sortOrder),
+    [items],
   );
 
-  const categoryMap = useMemo(
-    () => new Map(items.map((category) => [category._id, category.name])),
-    [items],
+  const editingItem = useMemo(
+    () =>
+      mode === "edit" && id
+        ? parentCategories.find((item) => item._id === id)
+        : undefined,
+    [parentCategories, mode, id],
   );
 
   async function handleSubmit(values: CategoryFormValues) {
@@ -77,7 +72,7 @@ export function CategoriesView() {
       name: values.name,
       slug: values.slug || slugify(values.name),
       image: values.image || undefined,
-      parentId: values.parentId || null,
+      parentId: null,
       isActive: values.isActive,
       sortOrder: values.sortOrder,
     };
@@ -100,12 +95,12 @@ export function CategoriesView() {
   return (
     <div className="flex flex-col gap-6">
       <AdminPageHeader
-        title="Categories"
-        description="Manage categories and subcategories. Use Parent Categories for top-level items."
+        title="Parent Categories"
+        description="Manage top-level categories used as parents for subcategories"
         actions={
           <Button onClick={openCreate} className="rounded-none">
             <PlusIcon data-icon="inline-start" />
-            Add category
+            Add parent category
           </Button>
         }
       />
@@ -138,19 +133,6 @@ export function CategoriesView() {
             ),
           },
           {
-            key: "parent",
-            header: "Parent",
-            hideOnMobile: true,
-            cell: (row) =>
-              row.parentId ? (
-                categoryMap.get(row.parentId) ?? "—"
-              ) : (
-                <Badge variant="outline" className="rounded-none">
-                  Top-level
-                </Badge>
-              ),
-          },
-          {
             key: "sortOrder",
             header: "Order",
             hideOnMobile: true,
@@ -175,10 +157,10 @@ export function CategoriesView() {
             ),
           },
         ]}
-        data={items}
+        data={parentCategories}
         isLoading={isLoading}
-        emptyTitle="No categories yet"
-        emptyDescription="Create your first category to organize products."
+        emptyTitle="No parent categories yet"
+        emptyDescription="Create a top-level category first, then add subcategories under Categories."
       />
 
       <AdminFormSheet
@@ -186,21 +168,25 @@ export function CategoriesView() {
         onOpenChange={(open) => {
           if (!open) close();
         }}
-        title={mode === "edit" ? "Edit category" : "New category"}
+        title={
+          mode === "edit" ? "Edit parent category" : "New parent category"
+        }
         description={
           mode === "edit"
-            ? "Update category details and visibility."
-            : "Add a new category or subcategory."
+            ? "Update this top-level category."
+            : "Add a new top-level parent category."
         }
-        formId="admin-category-form"
+        formId="admin-parent-category-form"
         mode={mode}
         isSubmitting={isCreating || isUpdating}
       >
         <CategoryForm
-          formId="admin-category-form"
+          formId="admin-parent-category-form"
           key={editingItem?._id ?? "create"}
-          defaultValues={editingItem ? toFormValues(editingItem) : createDefaults}
-          parentOptions={parentOptions}
+          defaultValues={
+            editingItem ? toFormValues(editingItem) : createDefaults
+          }
+          hideParentSelect
           onSubmit={handleSubmit}
           isSubmitting={isCreating || isUpdating}
         />
@@ -211,8 +197,8 @@ export function CategoriesView() {
         onOpenChange={(open) => {
           if (!open) setDeleteId(null);
         }}
-        title="Delete category?"
-        description="This category will be permanently removed. Products linked to it may need reassignment."
+        title="Delete parent category?"
+        description="This top-level category will be removed. Subcategories under it may need reassignment."
         onConfirm={handleDelete}
         isLoading={isDeleting}
       />

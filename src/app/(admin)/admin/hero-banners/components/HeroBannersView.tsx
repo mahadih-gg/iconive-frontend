@@ -159,12 +159,15 @@ export function HeroBannersView() {
             ? "Update banner image, order, and visibility."
             : "Add a new homepage hero slide."
         }
+        formId="admin-hero-banner-form"
+        mode={mode}
+        isSubmitting={isCreating || isUpdating}
       >
         <HeroBannerForm
+          formId="admin-hero-banner-form"
           key={editingItem?._id ?? "create"}
           defaultValues={editingItem ? toFormValues(editingItem) : createDefaults}
           onSubmit={handleSubmit}
-          isSubmitting={isCreating || isUpdating}
         />
       </AdminFormSheet>
 

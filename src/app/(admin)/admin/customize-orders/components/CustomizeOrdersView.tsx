@@ -163,14 +163,17 @@ export function CustomizeOrdersView() {
             ? "Update status and internal notes for this request."
             : "Add a dummy customize request."
         }
+        formId="admin-customize-order-form"
+        mode={sheet.mode}
+        isSubmitting={isCreating || isUpdating}
       >
         <CustomizeOrderForm
+          formId="admin-customize-order-form"
           key={`${sheet.mode}-${sheet.id ?? "new"}`}
           mode={sheet.mode ?? "create"}
           defaultValues={formDefaults}
           request={editingRequest}
           onSubmit={handleSubmit}
-          isSubmitting={isCreating || isUpdating}
         />
       </AdminFormSheet>
 

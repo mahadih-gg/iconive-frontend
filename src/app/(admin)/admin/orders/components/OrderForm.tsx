@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldError,
@@ -21,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { formatCurrency } from "@/utils/formatters";
 import type { AdminOrder } from "@/types/admin";
@@ -54,11 +52,11 @@ const createSchema = editSchema.extend({
 export type OrderFormValues = z.infer<typeof createSchema>;
 
 interface OrderFormProps {
+  formId: string;
   mode: "create" | "edit";
   defaultValues: OrderFormValues;
   order?: AdminOrder;
   onSubmit: (values: OrderFormValues) => void | Promise<void>;
-  isSubmitting?: boolean;
 }
 
 function statusLabel(value: string) {
@@ -66,11 +64,11 @@ function statusLabel(value: string) {
 }
 
 export function OrderForm({
+  formId,
   mode,
   defaultValues,
   order,
   onSubmit,
-  isSubmitting,
 }: OrderFormProps) {
   const schema = mode === "create" ? createSchema : editSchema;
 
@@ -80,7 +78,7 @@ export function OrderForm({
   });
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+    <form id={formId} onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
       {mode === "edit" && order ? (
         <FieldGroup className="gap-4">
           <FieldTitle>Customer</FieldTitle>
@@ -258,11 +256,6 @@ export function OrderForm({
           />
           <FieldError>{form.formState.errors.note?.message}</FieldError>
         </Field>
-
-        <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
-          {mode === "create" ? "Create order" : "Save changes"}
-        </Button>
       </FieldGroup>
     </form>
   );

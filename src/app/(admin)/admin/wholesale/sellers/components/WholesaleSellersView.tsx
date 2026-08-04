@@ -144,13 +144,15 @@ export function WholesaleSellersView() {
         }}
         title={sheet.mode === "create" ? "Add seller" : "Edit seller"}
         description="Manage wholesale seller contact details and approval status."
+        formId="admin-wholesale-seller-form"
+        mode={sheet.mode}
+        isSubmitting={isCreating || isUpdating}
       >
         <WholesaleSellerForm
+          formId="admin-wholesale-seller-form"
           key={`${sheet.mode}-${sheet.id ?? "new"}`}
           defaultValues={formDefaults}
           onSubmit={handleSubmit}
-          isSubmitting={isCreating || isUpdating}
-          submitLabel={sheet.mode === "create" ? "Create seller" : "Save changes"}
         />
       </AdminFormSheet>
 

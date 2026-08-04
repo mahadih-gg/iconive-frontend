@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldError,
@@ -13,7 +12,6 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 
 const schema = z.object({
@@ -27,17 +25,15 @@ const schema = z.object({
 export type AffiliateProgramFormValues = z.infer<typeof schema>;
 
 interface AffiliateProgramFormProps {
+  formId: string;
   defaultValues: AffiliateProgramFormValues;
   onSubmit: (values: AffiliateProgramFormValues) => void | Promise<void>;
-  isSubmitting?: boolean;
-  submitLabel?: string;
 }
 
 export function AffiliateProgramForm({
+  formId,
   defaultValues,
   onSubmit,
-  isSubmitting,
-  submitLabel = "Save",
 }: AffiliateProgramFormProps) {
   const form = useForm<AffiliateProgramFormValues>({
     resolver: zodResolver(schema),
@@ -45,7 +41,7 @@ export function AffiliateProgramForm({
   });
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
+    <form id={formId} onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup>
         <Field data-invalid={!!form.formState.errors.label}>
           <FieldLabel htmlFor="program-label">Label</FieldLabel>
@@ -98,10 +94,6 @@ export function AffiliateProgramForm({
             )}
           />
         </Field>
-        <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
-          {submitLabel}
-        </Button>
       </FieldGroup>
     </form>
   );

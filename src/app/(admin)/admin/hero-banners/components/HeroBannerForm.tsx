@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldContent,
@@ -12,7 +11,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import {
   heroBannerFormSchema,
@@ -20,15 +18,15 @@ import {
 } from "@/lib/validations/admin/heroBannerSchema";
 
 interface HeroBannerFormProps {
+  formId: string;
   defaultValues: HeroBannerFormValues;
   onSubmit: (values: HeroBannerFormValues) => void | Promise<void>;
-  isSubmitting?: boolean;
 }
 
 export function HeroBannerForm({
+  formId,
   defaultValues,
   onSubmit,
-  isSubmitting,
 }: HeroBannerFormProps) {
   const form = useForm<HeroBannerFormValues>({
     resolver: zodResolver(heroBannerFormSchema),
@@ -37,6 +35,7 @@ export function HeroBannerForm({
 
   return (
     <form
+      id={formId}
       onSubmit={form.handleSubmit(onSubmit)}
       className="flex flex-col gap-6"
     >
@@ -77,11 +76,6 @@ export function HeroBannerForm({
           />
         </Field>
       </FieldGroup>
-
-      <Button type="submit" disabled={isSubmitting} className="rounded-none">
-        {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
-        Save banner
-      </Button>
     </form>
   );
 }

@@ -1,36 +1,56 @@
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
-const TONE: Record<string, "default" | "secondary" | "destructive" | "outline"> =
-  {
-    active: "default",
-    approved: "default",
-    paid: "default",
-    published: "default",
-    completed: "default",
-    received: "default",
-    shipped: "secondary",
-    processing: "secondary",
-    contacted: "secondary",
-    quoted: "secondary",
-    in_progress: "secondary",
-    pending: "outline",
-    payment_pending: "outline",
-    order_received: "outline",
-    new: "outline",
-    rejected: "destructive",
-    cancelled: "destructive",
-    closed: "secondary",
-  };
+type BadgeTone = "success" | "neutral" | "warning" | "danger" | "muted";
+
+const TONE: Record<string, BadgeTone> = {
+  active: "success",
+  approved: "success",
+  paid: "success",
+  published: "success",
+  completed: "success",
+  received: "success",
+  shipped: "neutral",
+  processing: "neutral",
+  contacted: "neutral",
+  quoted: "neutral",
+  in_progress: "neutral",
+  pending: "warning",
+  payment_pending: "warning",
+  order_received: "warning",
+  new: "warning",
+  inactive: "muted",
+  rejected: "danger",
+  cancelled: "danger",
+  closed: "muted",
+};
+
+const TONE_CLASS: Record<BadgeTone, string> = {
+  success: "border-transparent bg-green-200 text-green-800",
+  neutral: "border-transparent bg-secondary text-secondary-foreground",
+  warning: "border-border bg-transparent text-foreground",
+  danger: "border-transparent bg-destructive/15 text-destructive",
+  muted: "border-border bg-transparent text-muted-foreground",
+};
 
 interface StatusBadgeProps {
   status: string;
+  className?: string;
 }
 
-export function StatusBadge({ status }: StatusBadgeProps) {
+export function StatusBadge({ status, className }: StatusBadgeProps) {
   const key = status.toLowerCase();
-  const variant = TONE[key] ?? "outline";
+  const tone = TONE[key] ?? "muted";
+
   return (
-    <Badge variant={variant} className="rounded-none capitalize">
+    <Badge
+      variant="outline"
+      className={cn(
+        "rounded-none capitalize",
+        TONE_CLASS[tone],
+        className,
+      )}
+    >
       {status.replaceAll("_", " ")}
     </Badge>
   );

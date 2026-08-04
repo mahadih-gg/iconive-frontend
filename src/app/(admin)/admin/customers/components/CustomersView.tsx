@@ -163,8 +163,12 @@ export function CustomersView() {
             ? "Add a new customer record."
             : "Update customer profile details."
         }
+        formId="admin-customer-form"
+        mode={sheet.mode}
+        isSubmitting={isCreating || isUpdating}
       >
         <CustomerForm
+          formId="admin-customer-form"
           key={`${sheet.mode}-${sheet.id ?? "new"}`}
           defaultValues={
             editingItem
@@ -172,8 +176,6 @@ export function CustomersView() {
               : emptyCustomerFormValues
           }
           onSubmit={handleSubmit}
-          onCancel={sheet.close}
-          isSubmitting={isCreating || isUpdating}
         />
       </AdminFormSheet>
 

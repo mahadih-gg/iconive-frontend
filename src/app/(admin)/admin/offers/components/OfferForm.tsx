@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldContent,
@@ -19,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import {
   offerFormSchema,
@@ -28,17 +26,17 @@ import {
 import type { AdminProduct } from "@/types/admin";
 
 interface OfferFormProps {
+  formId: string;
   defaultValues: OfferFormValues;
   products: AdminProduct[];
   onSubmit: (values: OfferFormValues) => void | Promise<void>;
-  isSubmitting?: boolean;
 }
 
 export function OfferForm({
+  formId,
   defaultValues,
   products,
   onSubmit,
-  isSubmitting,
 }: OfferFormProps) {
   const form = useForm<OfferFormValues>({
     resolver: zodResolver(offerFormSchema),
@@ -49,6 +47,7 @@ export function OfferForm({
 
   return (
     <form
+      id={formId}
       onSubmit={form.handleSubmit(onSubmit)}
       className="flex flex-col gap-6"
     >
@@ -147,11 +146,6 @@ export function OfferForm({
           />
         </Field>
       </FieldGroup>
-
-      <Button type="submit" disabled={isSubmitting} className="rounded-none">
-        {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
-        Save offer
-      </Button>
     </form>
   );
 }

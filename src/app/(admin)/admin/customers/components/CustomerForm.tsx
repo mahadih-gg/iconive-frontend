@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldError,
@@ -12,7 +11,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import type { AdminCustomer } from "@/types/admin";
 
@@ -59,30 +57,25 @@ export function toCustomerFormValues(
 }
 
 interface CustomerFormProps {
+  formId: string;
   defaultValues: CustomerFormValues;
   onSubmit: (values: CustomerFormValues) => void | Promise<void>;
-  onCancel: () => void;
-  isSubmitting?: boolean;
 }
 
 export function CustomerForm({
+  formId,
   defaultValues,
   onSubmit,
-  onCancel,
-  isSubmitting,
 }: CustomerFormProps) {
   const form = useForm<CustomerFormValues>({
     resolver: zodResolver(schema),
     defaultValues,
   });
 
-  async function handleSubmit(values: CustomerFormValues) {
-    await onSubmit(values);
-  }
-
   return (
     <form
-      onSubmit={form.handleSubmit(handleSubmit)}
+      id={formId}
+      onSubmit={form.handleSubmit(onSubmit)}
       className="flex flex-col gap-6"
     >
       <FieldGroup className="gap-4">
@@ -176,16 +169,6 @@ export function CustomerForm({
           <FieldError>{form.formState.errors.addressCount?.message}</FieldError>
         </Field>
       </FieldGroup>
-
-      <div className="flex gap-2">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
-          Save
-        </Button>
-      </div>
     </form>
   );
 }

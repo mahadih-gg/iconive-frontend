@@ -1,6 +1,7 @@
 import {
   BadgePercent,
   FileText,
+  FolderTree,
   Handshake,
   HelpCircle,
   ImageIcon,
@@ -35,6 +36,11 @@ export const ADMIN_NAV: AdminNavGroup[] = [
   {
     label: "Catalog",
     items: [
+      {
+        href: "/admin/parent-categories",
+        label: "Parent Categories",
+        icon: FolderTree,
+      },
       { href: "/admin/categories", label: "Categories", icon: Tags },
       { href: "/admin/products", label: "Products", icon: Package },
       { href: "/admin/offers", label: "Offers", icon: BadgePercent },

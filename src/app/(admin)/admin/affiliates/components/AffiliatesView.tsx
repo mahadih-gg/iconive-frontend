@@ -311,24 +311,30 @@ export function AffiliatesView() {
             ? "Review applicant details and update approval status."
             : "Configure affiliate program content shown on the site."
         }
+        formId={
+          tab === "applications"
+            ? "admin-affiliate-application-form"
+            : "admin-affiliate-program-form"
+        }
+        mode={sheet.mode}
+        isSubmitting={isSubmitting}
       >
         {tab === "applications" ? (
           <AffiliateApplicationForm
+            formId="admin-affiliate-application-form"
             key={`app-${sheet.mode}-${sheet.id ?? "new"}`}
             mode={sheet.mode ?? "create"}
             defaultValues={applicationDefaults}
             application={editingApplication}
             programOptions={programOptions}
             onSubmit={handleApplicationSubmit}
-            isSubmitting={isSubmitting}
           />
         ) : (
           <AffiliateProgramForm
+            formId="admin-affiliate-program-form"
             key={`prog-${sheet.mode}-${sheet.id ?? "new"}`}
             defaultValues={programDefaults}
             onSubmit={handleProgramSubmit}
-            isSubmitting={isSubmitting}
-            submitLabel={sheet.mode === "create" ? "Create program" : "Save changes"}
           />
         )}
       </AdminFormSheet>

@@ -159,14 +159,17 @@ export function OrdersView() {
             ? "Update fulfillment status and delivery details."
             : "Add a dummy order for testing."
         }
+        formId="admin-order-form"
+        mode={sheet.mode}
+        isSubmitting={isCreating || isUpdating}
       >
         <OrderForm
+          formId="admin-order-form"
           key={`${sheet.mode}-${sheet.id ?? "new"}`}
           mode={sheet.mode ?? "create"}
           defaultValues={formDefaults}
           order={editingOrder}
           onSubmit={handleSubmit}
-          isSubmitting={isCreating || isUpdating}
         />
       </AdminFormSheet>
 

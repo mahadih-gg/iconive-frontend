@@ -2,14 +2,17 @@
 
 import type { ReactNode } from "react";
 
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Spinner } from "@/components/ui/spinner";
+import type { AdminSheetMode } from "@/hooks/admin/useAdminSheet";
 
 interface AdminFormSheetProps {
   open: boolean;
@@ -17,7 +20,13 @@ interface AdminFormSheetProps {
   title: string;
   description?: string;
   children: ReactNode;
-  footer?: ReactNode;
+  /** Form element id — footer submit button targets this form */
+  formId: string;
+  mode?: AdminSheetMode | null;
+  isSubmitting?: boolean;
+  createLabel?: string;
+  updateLabel?: string;
+  cancelLabel?: string;
 }
 
 export function AdminFormSheet({
@@ -26,26 +35,53 @@ export function AdminFormSheet({
   title,
   description,
   children,
-  footer,
+  formId,
+  mode = "create",
+  isSubmitting = false,
+  createLabel = "Create",
+  updateLabel = "Update",
+  cancelLabel = "Cancel",
 }: AdminFormSheetProps) {
+  const submitLabel = mode === "edit" ? updateLabel : createLabel;
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="flex w-full flex-col gap-0 p-0 sm:max-w-xl"
+        showCloseButton
+        className="flex h-full w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-xl"
       >
-        <SheetHeader className="border-b border-border px-4 py-4">
+        <SheetHeader className="shrink-0 border-b border-border pr-12 px-4 py-4">
           <SheetTitle>{title}</SheetTitle>
           {description ? (
             <SheetDescription>{description}</SheetDescription>
           ) : null}
         </SheetHeader>
-        <ScrollArea className="flex-1">
+
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <div className="px-4 py-4">{children}</div>
-        </ScrollArea>
-        {footer ? (
-          <div className="mt-auto border-t border-border px-4 py-4">{footer}</div>
-        ) : null}
+        </div>
+
+        <SheetFooter className="shrink-0 flex-row gap-2 border-t border-border sm:justify-end">
+          <Button
+            type="button"
+            variant="outline"
+            className="rounded-none"
+            disabled={isSubmitting}
+            onClick={() => onOpenChange(false)}
+          >
+            {cancelLabel}
+          </Button>
+          <Button
+            type="submit"
+            form={formId}
+            className="rounded-none"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
+            {submitLabel}
+          </Button>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );

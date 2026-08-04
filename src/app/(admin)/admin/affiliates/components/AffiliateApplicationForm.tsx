@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldError,
@@ -21,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import type { AdminAffiliateApplication } from "@/types/admin";
 
@@ -42,21 +40,21 @@ const createSchema = editSchema.extend({
 export type AffiliateApplicationFormValues = z.infer<typeof createSchema>;
 
 interface AffiliateApplicationFormProps {
+  formId: string;
   mode: "create" | "edit";
   defaultValues: AffiliateApplicationFormValues;
   application?: AdminAffiliateApplication;
   programOptions: string[];
   onSubmit: (values: AffiliateApplicationFormValues) => void | Promise<void>;
-  isSubmitting?: boolean;
 }
 
 export function AffiliateApplicationForm({
+  formId,
   mode,
   defaultValues,
   application,
   programOptions,
   onSubmit,
-  isSubmitting,
 }: AffiliateApplicationFormProps) {
   const schema = mode === "create" ? createSchema : editSchema;
 
@@ -66,7 +64,7 @@ export function AffiliateApplicationForm({
   });
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+    <form id={formId} onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
       {mode === "edit" && application ? (
         <FieldGroup className="gap-4">
           <FieldTitle>Application details</FieldTitle>
@@ -181,11 +179,6 @@ export function AffiliateApplicationForm({
           />
           <FieldError>{form.formState.errors.status?.message}</FieldError>
         </Field>
-
-        <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
-          {mode === "create" ? "Create application" : "Save changes"}
-        </Button>
       </FieldGroup>
     </form>
   );

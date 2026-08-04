@@ -1,12 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
+import { ImageUploadField } from "@/components/admin/shared/ImageUploadField";
 import {
   Field,
   FieldContent,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -15,30 +17,36 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import {
   categoryFormSchema,
   type CategoryFormValues,
 } from "@/lib/validations/admin/categorySchema";
 import type { AdminCategory } from "@/types/admin";
+import { slugify } from "@/utils/slugify";
 
 const NONE_PARENT = "__none__";
 
 interface CategoryFormProps {
+  formId: string;
   defaultValues: CategoryFormValues;
-  parentOptions: AdminCategory[];
+  parentOptions?: AdminCategory[];
+  /** Hide parent select — used for top-level parent category management */
+  hideParentSelect?: boolean;
   onSubmit: (values: CategoryFormValues) => void | Promise<void>;
   isSubmitting?: boolean;
 }
 
 export function CategoryForm({
+  formId,
   defaultValues,
-  parentOptions,
+  parentOptions = [],
+  hideParentSelect = false,
   onSubmit,
   isSubmitting,
 }: CategoryFormProps) {
@@ -47,14 +55,37 @@ export function CategoryForm({
     defaultValues,
   });
 
+  const nameValue = form.watch("name");
   const parentId = form.watch("parentId");
+  const imageValue = form.watch("image");
+
+  useEffect(() => {
+    form.setValue("slug", slugify(nameValue ?? ""), {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  }, [nameValue, form]);
 
   return (
     <form
+      id={formId}
       onSubmit={form.handleSubmit(onSubmit)}
       className="flex flex-col gap-6"
     >
       <FieldGroup>
+        <Field data-invalid={!!form.formState.errors.image}>
+          <FieldLabel>Image</FieldLabel>
+          <ImageUploadField
+            value={imageValue}
+            onChange={(value) =>
+              form.setValue("image", value, { shouldValidate: true })
+            }
+            disabled={isSubmitting}
+            label="Upload category image"
+          />
+          <FieldError>{form.formState.errors.image?.message}</FieldError>
+        </Field>
+
         <Field data-invalid={!!form.formState.errors.name}>
           <FieldLabel htmlFor="category-name">Name</FieldLabel>
           <Input
@@ -70,47 +101,45 @@ export function CategoryForm({
           <FieldLabel htmlFor="category-slug">Slug</FieldLabel>
           <Input
             id="category-slug"
-            className="rounded-none"
+            className="rounded-none bg-muted"
+            readOnly
+            aria-readonly="true"
             aria-invalid={!!form.formState.errors.slug}
             {...form.register("slug")}
           />
+          <FieldDescription>Auto-generated from the name</FieldDescription>
           <FieldError>{form.formState.errors.slug?.message}</FieldError>
         </Field>
 
-        <Field data-invalid={!!form.formState.errors.image}>
-          <FieldLabel htmlFor="category-image">Image URL</FieldLabel>
-          <Input
-            id="category-image"
-            className="rounded-none"
-            placeholder="/Image/..."
-            aria-invalid={!!form.formState.errors.image}
-            {...form.register("image")}
-          />
-          <FieldError>{form.formState.errors.image?.message}</FieldError>
-        </Field>
-
-        <Field data-invalid={!!form.formState.errors.parentId}>
-          <FieldLabel htmlFor="category-parent">Parent category</FieldLabel>
-          <Select
-            value={parentId || NONE_PARENT}
-            onValueChange={(value) =>
-              form.setValue("parentId", value === NONE_PARENT ? "" : value)
-            }
-          >
-            <SelectTrigger id="category-parent" className="w-full rounded-none">
-              <SelectValue placeholder="Top-level category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={NONE_PARENT}>None (top-level)</SelectItem>
-              {parentOptions.map((category) => (
-                <SelectItem key={category._id} value={category._id}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <FieldError>{form.formState.errors.parentId?.message}</FieldError>
-        </Field>
+        {!hideParentSelect ? (
+          <Field data-invalid={!!form.formState.errors.parentId}>
+            <FieldLabel htmlFor="category-parent">Parent category</FieldLabel>
+            <Select
+              value={parentId || NONE_PARENT}
+              onValueChange={(value) =>
+                form.setValue("parentId", value === NONE_PARENT ? "" : value)
+              }
+            >
+              <SelectTrigger
+                id="category-parent"
+                className="w-full rounded-none"
+              >
+                <SelectValue placeholder="Top-level category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value={NONE_PARENT}>None (top-level)</SelectItem>
+                  {parentOptions.map((category) => (
+                    <SelectItem key={category._id} value={category._id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <FieldError>{form.formState.errors.parentId?.message}</FieldError>
+          </Field>
+        ) : null}
 
         <Field data-invalid={!!form.formState.errors.sortOrder}>
           <FieldLabel htmlFor="category-sort-order">Sort order</FieldLabel>
@@ -136,11 +165,6 @@ export function CategoryForm({
           />
         </Field>
       </FieldGroup>
-
-      <Button type="submit" disabled={isSubmitting} className="rounded-none">
-        {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
-        Save category
-      </Button>
     </form>
   );
 }

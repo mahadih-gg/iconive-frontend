@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Field,
@@ -22,7 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -34,17 +32,17 @@ import type { AdminCategory } from "@/types/admin";
 const NONE_SUBCATEGORY = "__none__";
 
 interface ProductFormProps {
+  formId: string;
   defaultValues: ProductFormValues;
   categories: AdminCategory[];
   onSubmit: (values: ProductFormValues) => void | Promise<void>;
-  isSubmitting?: boolean;
 }
 
 export function ProductForm({
+  formId,
   defaultValues,
   categories,
   onSubmit,
-  isSubmitting,
 }: ProductFormProps) {
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
@@ -69,6 +67,7 @@ export function ProductForm({
 
   return (
     <form
+      id={formId}
       onSubmit={form.handleSubmit(onSubmit)}
       className="flex flex-col gap-6"
     >
@@ -226,11 +225,6 @@ export function ProductForm({
           />
         </Field>
       </FieldGroup>
-
-      <Button type="submit" disabled={isSubmitting} className="rounded-none">
-        {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
-        Save product
-      </Button>
     </form>
   );
 }

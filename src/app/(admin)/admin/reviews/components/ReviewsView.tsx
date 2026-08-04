@@ -166,8 +166,12 @@ export function ReviewsView() {
             ? "Add a customer review manually."
             : "Update review content and publishing status."
         }
+        formId="admin-review-form"
+        mode={sheet.mode}
+        isSubmitting={isCreating || isUpdating}
       >
         <ReviewForm
+          formId="admin-review-form"
           key={`${sheet.mode}-${sheet.id ?? "new"}`}
           defaultValues={
             editingItem
@@ -175,8 +179,6 @@ export function ReviewsView() {
               : emptyReviewFormValues
           }
           onSubmit={handleSubmit}
-          onCancel={sheet.close}
-          isSubmitting={isCreating || isUpdating}
         />
       </AdminFormSheet>
 

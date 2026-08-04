@@ -249,13 +249,16 @@ export function ProductsView() {
             ? "Update product details, pricing, and availability."
             : "Add a new product to the catalog."
         }
+        formId="admin-product-form"
+        mode={mode}
+        isSubmitting={isCreating || isUpdating}
       >
         <ProductForm
+          formId="admin-product-form"
           key={editingItem?._id ?? "create"}
           defaultValues={editingItem ? toFormValues(editingItem) : createDefaults}
           categories={categories}
           onSubmit={handleSubmit}
-          isSubmitting={isCreating || isUpdating}
         />
       </AdminFormSheet>
 

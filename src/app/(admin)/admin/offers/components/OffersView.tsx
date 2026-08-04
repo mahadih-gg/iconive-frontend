@@ -182,13 +182,16 @@ export function OffersView() {
             ? "Update offer details and schedule."
             : "Set up a new promotional offer."
         }
+        formId="admin-offer-form"
+        mode={mode}
+        isSubmitting={isCreating || isUpdating}
       >
         <OfferForm
+          formId="admin-offer-form"
           key={editingItem?._id ?? "create"}
           defaultValues={editingItem ? toFormValues(editingItem) : createDefaults}
           products={products}
           onSubmit={handleSubmit}
-          isSubmitting={isCreating || isUpdating}
         />
       </AdminFormSheet>
 

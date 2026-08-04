@@ -142,15 +142,17 @@ export function FaqsView() {
             ? "Add a new frequently asked question."
             : "Update question, answer, or display order."
         }
+        formId="admin-faq-form"
+        mode={sheet.mode}
+        isSubmitting={isCreating || isUpdating}
       >
         <FaqForm
+          formId="admin-faq-form"
           key={`${sheet.mode}-${sheet.id ?? "new"}`}
           defaultValues={
             editingItem ? toFaqFormValues(editingItem) : emptyFaqFormValues
           }
           onSubmit={handleSubmit}
-          onCancel={sheet.close}
-          isSubmitting={isCreating || isUpdating}
         />
       </AdminFormSheet>
 

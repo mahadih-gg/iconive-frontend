@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
@@ -13,7 +12,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import type { AdminReview } from "@/types/admin";
@@ -53,30 +51,25 @@ export function toReviewFormValues(review: AdminReview): ReviewFormValues {
 }
 
 interface ReviewFormProps {
+  formId: string;
   defaultValues: ReviewFormValues;
   onSubmit: (values: ReviewFormValues) => void | Promise<void>;
-  onCancel: () => void;
-  isSubmitting?: boolean;
 }
 
 export function ReviewForm({
+  formId,
   defaultValues,
   onSubmit,
-  onCancel,
-  isSubmitting,
 }: ReviewFormProps) {
   const form = useForm<ReviewFormValues>({
     resolver: zodResolver(schema),
     defaultValues,
   });
 
-  async function handleSubmit(values: ReviewFormValues) {
-    await onSubmit(values);
-  }
-
   return (
     <form
-      onSubmit={form.handleSubmit(handleSubmit)}
+      id={formId}
+      onSubmit={form.handleSubmit(onSubmit)}
       className="flex flex-col gap-6"
     >
       <FieldGroup className="gap-4">
@@ -169,16 +162,6 @@ export function ReviewForm({
           />
         </Field>
       </FieldGroup>
-
-      <div className="flex gap-2">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
-          Save
-        </Button>
-      </div>
     </form>
   );
 }

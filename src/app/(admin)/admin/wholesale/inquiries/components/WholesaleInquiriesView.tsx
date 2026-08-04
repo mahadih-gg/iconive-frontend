@@ -150,14 +150,17 @@ export function WholesaleInquiriesView() {
             ? "Review inquiry details and update follow-up status."
             : "Add a dummy wholesale inquiry."
         }
+        formId="admin-wholesale-inquiry-form"
+        mode={sheet.mode}
+        isSubmitting={isCreating || isUpdating}
       >
         <WholesaleInquiryForm
+          formId="admin-wholesale-inquiry-form"
           key={`${sheet.mode}-${sheet.id ?? "new"}`}
           mode={sheet.mode ?? "create"}
           defaultValues={formDefaults}
           inquiry={editingInquiry}
           onSubmit={handleSubmit}
-          isSubmitting={isCreating || isUpdating}
         />
       </AdminFormSheet>
 

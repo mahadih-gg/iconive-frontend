@@ -150,15 +150,17 @@ export function BlogView() {
             ? "Add a new article to the blog."
             : "Update post details and publishing status."
         }
+        formId="admin-blog-form"
+        mode={sheet.mode}
+        isSubmitting={isCreating || isUpdating}
       >
         <BlogForm
+          formId="admin-blog-form"
           key={`${sheet.mode}-${sheet.id ?? "new"}`}
           defaultValues={
             editingItem ? toBlogFormValues(editingItem) : emptyBlogFormValues
           }
           onSubmit={handleSubmit}
-          onCancel={sheet.close}
-          isSubmitting={isCreating || isUpdating}
         />
       </AdminFormSheet>
 
