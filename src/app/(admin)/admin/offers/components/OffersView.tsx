@@ -12,6 +12,7 @@ import { StatusBadge } from "@/components/admin/shared/StatusBadge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+  useAdminCategories,
   useAdminOffers,
   useAdminProducts,
 } from "@/hooks/admin/useAdminResources";
@@ -27,19 +28,31 @@ import { OfferForm } from "./OfferForm";
 
 const createDefaults: OfferFormValues = {
   title: "",
-  productId: "",
-  discountPercent: 10,
+  productIds: [],
+  categoryIds: [],
+  subCategoryIds: [],
+  discountType: "percentage",
+  discount: 10,
   startsAt: "",
   endsAt: "",
   isActive: true,
   bannerImage: "",
 };
 
+function getOfferProductIds(offer: AdminOffer): string[] {
+  if (offer.productIds?.length) return offer.productIds;
+  if (offer.productId) return [offer.productId];
+  return [];
+}
+
 function toFormValues(offer: AdminOffer): OfferFormValues {
   return {
     title: offer.title,
-    productId: offer.productId,
-    discountPercent: offer.discountPercent,
+    productIds: getOfferProductIds(offer),
+    categoryIds: offer.categoryIds ?? [],
+    subCategoryIds: offer.subCategoryIds ?? [],
+    discountType: offer.discountType ?? "percentage",
+    discount: offer.discountPercent,
     startsAt: toDatetimeLocalValue(offer.startsAt),
     endsAt: toDatetimeLocalValue(offer.endsAt),
     isActive: offer.isActive,
@@ -51,6 +64,33 @@ function formatDateRange(startsAt: string, endsAt: string): string {
   const start = new Date(startsAt).toLocaleDateString();
   const end = new Date(endsAt).toLocaleDateString();
   return `${start} – ${end}`;
+}
+
+function formatOfferTargets(
+  offer: AdminOffer,
+  productMap: Map<string, string>,
+  categoryMap: Map<string, string>,
+): string {
+  const labels: string[] = [];
+
+  for (const id of getOfferProductIds(offer)) {
+    const name = productMap.get(id);
+    if (name) labels.push(name);
+  }
+
+  for (const id of offer.categoryIds ?? []) {
+    const name = categoryMap.get(id);
+    if (name) labels.push(name);
+  }
+
+  for (const id of offer.subCategoryIds ?? []) {
+    const name = categoryMap.get(id);
+    if (name) labels.push(name);
+  }
+
+  if (labels.length === 0) return "No targets";
+  if (labels.length <= 2) return labels.join(", ");
+  return `${labels.slice(0, 2).join(", ")} +${labels.length - 2}`;
 }
 
 export function OffersView() {
@@ -65,6 +105,7 @@ export function OffersView() {
     isDeleting,
   } = useAdminOffers();
   const { items: products } = useAdminProducts();
+  const { items: categories } = useAdminCategories();
   const { isOpen, mode, id, openCreate, openEdit, close } = useAdminSheet();
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -78,11 +119,20 @@ export function OffersView() {
     [products],
   );
 
+  const categoryMap = useMemo(
+    () => new Map(categories.map((category) => [category._id, category.name])),
+    [categories],
+  );
+
   async function handleSubmit(values: OfferFormValues) {
-    const payload = {
+    const payload: Partial<AdminOffer> = {
       title: values.title,
-      productId: values.productId,
-      discountPercent: values.discountPercent,
+      productIds: values.productIds,
+      productId: values.productIds[0],
+      categoryIds: values.categoryIds,
+      subCategoryIds: values.subCategoryIds,
+      discountType: values.discountType,
+      discountPercent: values.discount,
       startsAt: fromDatetimeLocalValue(values.startsAt),
       endsAt: fromDatetimeLocalValue(values.endsAt),
       isActive: values.isActive,
@@ -126,7 +176,7 @@ export function OffersView() {
               <div className="flex flex-col gap-1">
                 <span className="font-medium">{row.title}</span>
                 <span className="text-xs text-muted-foreground">
-                  {productMap.get(row.productId) ?? "Unknown product"}
+                  {formatOfferTargets(row, productMap, categoryMap)}
                 </span>
               </div>
             ),
@@ -136,7 +186,9 @@ export function OffersView() {
             header: "Discount",
             cell: (row) => (
               <Badge variant="secondary" className="rounded-none">
-                {row.discountPercent}%
+                {(row.discountType ?? "percentage") === "fixed"
+                  ? `$${row.discountPercent}`
+                  : `${row.discountPercent}%`}
               </Badge>
             ),
           },
@@ -168,7 +220,7 @@ export function OffersView() {
         data={items}
         isLoading={isLoading}
         emptyTitle="No offers yet"
-        emptyDescription="Create a promotional offer for a product."
+        emptyDescription="Create a promotional offer for products or categories."
       />
 
       <AdminFormSheet
@@ -191,6 +243,7 @@ export function OffersView() {
           key={editingItem?._id ?? "create"}
           defaultValues={editingItem ? toFormValues(editingItem) : createDefaults}
           products={products}
+          categories={categories}
           onSubmit={handleSubmit}
         />
       </AdminFormSheet>

@@ -26,6 +26,7 @@ import {
 import { useAdminSheet } from "@/hooks/admin/useAdminSheet";
 import type { ProductFormValues } from "@/lib/validations/admin/productSchema";
 import type { AdminProduct } from "@/types/admin";
+import { slugify } from "@/utils/slugify";
 
 import { ProductForm } from "./ProductForm";
 
@@ -33,30 +34,72 @@ const ALL_CATEGORIES = "all";
 
 const createDefaults: ProductFormValues = {
   name: "",
+  slug: "",
   description: "",
-  price: 0,
-  discount: 0,
-  images: [],
   categoryId: "",
   subCategoryId: "",
+  media: [],
+  variants: [],
+  price: 0,
+  discountType: "percentage",
+  discount: 0,
   stock: 0,
+  thumbnail: "",
+  metaTitle: "",
+  metaDescription: "",
+  metaKeywords: "",
+  ogImage: "",
   isFeatured: false,
   available: true,
 };
 
 function toFormValues(product: AdminProduct): ProductFormValues {
+  const variants =
+    product.variants?.length
+      ? product.variants
+      : (product.addons ?? []).map((addon) => ({
+          label: addon.name,
+          value: addon.value,
+          price: addon.price ?? 0,
+          stock: 0,
+          mediaType: "image" as const,
+          image: "",
+          videoUrl: "",
+        }));
+
+  const media =
+    product.media?.length
+      ? product.media
+      : product.images.map((url) => ({ type: "image" as const, url }));
+
   return {
     name: product.name,
+    slug: product.slug || slugify(product.name),
     description: product.description ?? "",
-    price: product.price,
-    discount: product.discount ?? 0,
-    images: product.images,
     categoryId: product.categoryId,
     subCategoryId: product.subCategoryId ?? "",
+    media,
+    variants,
+    price: product.price,
+    discountType: product.discountType ?? "percentage",
+    discount: product.discount ?? 0,
     stock: product.stock,
+    thumbnail: product.thumbnail ?? product.images[0] ?? "",
+    metaTitle: product.metaTitle ?? "",
+    metaDescription: product.metaDescription ?? "",
+    metaKeywords: product.metaKeywords ?? "",
+    ogImage: product.ogImage ?? "",
     isFeatured: product.isFeatured,
     available: product.available,
   };
+}
+
+function buildImages(values: ProductFormValues): string[] {
+  const fromMedia = values.media
+    .filter((item) => item.type === "image" && item.url)
+    .map((item) => item.url);
+  const images = [values.thumbnail, ...fromMedia].filter(Boolean) as string[];
+  return [...new Set(images)];
 }
 
 export function ProductsView() {
@@ -106,18 +149,48 @@ export function ProductsView() {
   }, [items, search, categoryFilter]);
 
   async function handleSubmit(values: ProductFormValues) {
-    const payload = {
+    const images = buildImages(values);
+    const variants = values.variants.map((variant) => ({
+      label: variant.label,
+      value: variant.value || undefined,
+      price: variant.price,
+      stock: variant.stock,
+      mediaType: variant.mediaType,
+      image: variant.mediaType === "image" ? variant.image || undefined : undefined,
+      videoUrl:
+        variant.mediaType === "video" ? variant.videoUrl || undefined : undefined,
+    }));
+
+    const media = values.media.filter(
+      (item): item is { type: "image" | "youtube"; url: string } =>
+        Boolean(item.type && item.url),
+    );
+
+    const payload: Partial<AdminProduct> = {
       name: values.name,
+      slug: values.slug || slugify(values.name),
       description: values.description || undefined,
       price: values.price,
+      discountType: values.discountType,
       discount: values.discount || 0,
-      images: values.images.filter(Boolean),
+      images,
+      media,
+      thumbnail: values.thumbnail || images[0] || undefined,
       categoryId: values.categoryId,
       subCategoryId: values.subCategoryId || undefined,
       stock: values.stock,
       isFeatured: values.isFeatured,
       available: values.available,
-      addons: editingItem?.addons ?? [],
+      variants,
+      addons: variants.map((variant) => ({
+        name: variant.label,
+        value: variant.value ?? "",
+        price: variant.price,
+      })),
+      metaTitle: values.metaTitle || undefined,
+      metaDescription: values.metaDescription || undefined,
+      metaKeywords: values.metaKeywords || undefined,
+      ogImage: values.ogImage || undefined,
     };
 
     if (mode === "edit" && id) {
@@ -245,6 +318,7 @@ export function ProductsView() {
         formId="admin-product-form"
         mode={mode}
         isSubmitting={isCreating || isUpdating}
+        contentClassName="w-[80%] sm:max-w-[80%]"
       >
         <ProductForm
           formId="admin-product-form"

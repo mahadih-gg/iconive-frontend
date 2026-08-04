@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import { Spinner } from "@/components/ui/spinner";
 import type { AdminSheetMode } from "@/hooks/admin/useAdminSheet";
+import { cn } from "@/lib/utils";
 
 interface AdminFormSheetProps {
   open: boolean;
@@ -27,6 +28,7 @@ interface AdminFormSheetProps {
   createLabel?: string;
   updateLabel?: string;
   cancelLabel?: string;
+  contentClassName?: string;
 }
 
 export function AdminFormSheet({
@@ -41,6 +43,7 @@ export function AdminFormSheet({
   createLabel = "Create",
   updateLabel = "Update",
   cancelLabel = "Cancel",
+  contentClassName,
 }: AdminFormSheetProps) {
   const submitLabel = mode === "edit" ? updateLabel : createLabel;
 
@@ -49,7 +52,10 @@ export function AdminFormSheet({
       <SheetContent
         side="right"
         showCloseButton
-        className="flex h-full w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-xl"
+        className={cn(
+          "flex h-full w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-xl",
+          contentClassName,
+        )}
       >
         <SheetHeader className="shrink-0 border-b border-border pr-12 px-4 py-4">
           <SheetTitle>{title}</SheetTitle>

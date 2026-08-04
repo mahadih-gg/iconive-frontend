@@ -27,26 +27,55 @@ export interface AdminCategory {
   createdAt: string;
 }
 
+export interface AdminProductMediaItem {
+  type: "image" | "youtube";
+  url: string;
+}
+
+export interface AdminProductVariant {
+  label: string;
+  value?: string;
+  price: number;
+  stock: number;
+  mediaType: "image" | "video";
+  image?: string;
+  videoUrl?: string;
+}
+
 export interface AdminProduct {
   _id: string;
   name: string;
+  slug: string;
   description?: string;
   price: number;
+  discountType?: "percentage" | "fixed";
   discount?: number;
   images: string[];
+  media?: AdminProductMediaItem[];
+  thumbnail?: string;
   categoryId: string;
   subCategoryId?: string;
   stock: number;
   isFeatured: boolean;
   available: boolean;
+  variants?: AdminProductVariant[];
   addons: { name: string; value: string; price?: number }[];
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string;
+  ogImage?: string;
   createdAt: string;
 }
 
 export interface AdminOffer {
   _id: string;
   title: string;
-  productId: string;
+  /** @deprecated Prefer productIds */
+  productId?: string;
+  productIds?: string[];
+  categoryIds?: string[];
+  subCategoryIds?: string[];
+  discountType?: "percentage" | "fixed";
   discountPercent: number;
   startsAt: string;
   endsAt: string;
