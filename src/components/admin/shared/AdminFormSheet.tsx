@@ -53,7 +53,7 @@ export function AdminFormSheet({
         side="right"
         showCloseButton
         className={cn(
-          "flex h-full w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-xl",
+          "flex h-full w-full! max-w-none flex-col gap-0 overflow-hidden p-0 sm:max-w-xl",
           contentClassName,
         )}
       >

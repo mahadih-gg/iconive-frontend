@@ -151,8 +151,8 @@ export function ProductForm({
 
   useEffect(() => {
     form.setValue("slug", slugify(nameValue ?? ""), {
-      shouldValidate: true,
       shouldDirty: true,
+      shouldValidate: form.formState.isSubmitted,
     });
   }, [nameValue, form]);
 

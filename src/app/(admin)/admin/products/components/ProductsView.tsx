@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { PlusIcon, SearchIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 
 import { AdminDataTable } from "@/components/admin/shared/AdminDataTable";
 import { AdminFormSheet } from "@/components/admin/shared/AdminFormSheet";
@@ -58,14 +58,14 @@ function toFormValues(product: AdminProduct): ProductFormValues {
     product.variants?.length
       ? product.variants
       : (product.addons ?? []).map((addon) => ({
-          label: addon.name,
-          value: addon.value,
-          price: addon.price ?? 0,
-          stock: 0,
-          mediaType: "image" as const,
-          image: "",
-          videoUrl: "",
-        }));
+        label: addon.name,
+        value: addon.value,
+        price: addon.price ?? 0,
+        stock: 0,
+        mediaType: "image" as const,
+        image: "",
+        videoUrl: "",
+      }));
 
   const media =
     product.media?.length
@@ -318,7 +318,7 @@ export function ProductsView() {
         formId="admin-product-form"
         mode={mode}
         isSubmitting={isCreating || isUpdating}
-        contentClassName="w-[80%] sm:max-w-[80%]"
+        contentClassName="w-full sm:max-w-[80%]"
       >
         <ProductForm
           formId="admin-product-form"
