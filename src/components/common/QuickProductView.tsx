@@ -24,47 +24,20 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { useWishlist } from "@/hooks/useWishlist";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types/product.type";
-
-const COLOR_OPTIONS = [
-  { label: "Jet Black (#1)", src: "/Image/Black/1jetblack.webp" },
-  { label: "Darkest Brown (#2)", src: "/Image/Brown/2 DARKEST BROWN.webp" },
-  { label: "Medium Brown (#4)", src: "/Image/Brown/4 medium brown.webp" },
-  { label: "Platinum Blonde (#613)", src: "/Image/Blonde/613 PLATINUM BLONDE.webp" },
-] as const;
-
-const LENGTH_OPTIONS = ['20"', '24"', '28"', '30"'] as const;
-const DENSITY_OPTIONS = ["180%", "200%", "250%"] as const;
-const SIZE_OPTIONS = ["Small", "Medium", "Large"] as const;
+import {
+  COLOR_OPTIONS,
+  DENSITY_OPTIONS,
+  getCategoryLabel,
+  getDiscountedPrice,
+  getGallery,
+  LENGTH_OPTIONS,
+  SIZE_OPTIONS,
+} from "@/utils/product-options";
 
 interface QuickProductViewProps {
   product: Product | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-function getGallery(product: Product) {
-  const primary = String(
-    product.photo ??
-    product.image ??
-    (Array.isArray(product.images) ? product.images[0] : undefined) ??
-    "/Image/logo/logo.png"
-  );
-
-  const fromImages = Array.isArray(product.images)
-    ? product.images.map(String).filter(Boolean)
-    : [];
-
-  const extras = COLOR_OPTIONS.map((c) => c.src).filter((src) => src !== primary);
-  const unique = Array.from(new Set([primary, ...fromImages, ...extras]));
-  return unique.slice(0, 4);
-}
-
-function getCategoryLabel(product: Product) {
-  if (typeof product.category === "string") return product.category;
-  if (product.category && typeof product.category === "object" && "name" in product.category) {
-    return String(product.category.name);
-  }
-  return "Hair Collection";
 }
 
 function OptionButton({
@@ -132,7 +105,7 @@ export function QuickProductView({
   const inWishlist = isInWishlist?.(product._id) ?? false;
   const price = Number(product.price ?? 0);
   const discount = Number(product.discount ?? 0);
-  const finalPrice = discount > 0 ? price - (price * discount) / 100 : price;
+  const finalPrice = getDiscountedPrice(product);
   const category = getCategoryLabel(product);
   const image = gallery[activeImage] ?? gallery[0] ?? "/Image/logo/logo.png";
   const description =
