@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { formatEnumLabel } from "@/lib/admin/labels";
 import type { AdminCustomizeOrder } from "@/types/admin";
 
 const STATUSES = ["new", "in_progress", "quoted", "completed", "cancelled"] as const;
@@ -176,7 +177,7 @@ export function CustomizeOrderForm({
                 <SelectContent>
                   {STATUSES.map((status) => (
                     <SelectItem key={status} value={status}>
-                      {status.replaceAll("_", " ")}
+                      {formatEnumLabel(status)}
                     </SelectItem>
                   ))}
                 </SelectContent>

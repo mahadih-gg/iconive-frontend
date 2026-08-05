@@ -36,7 +36,7 @@ function AnnouncementBar({ glass = false }: { glass?: boolean }) {
   );
 }
 
-/** Layer 1 — email left, ICONIVE center, socials right */
+/** Layer 1 — socials left, ICONIVE center, contact right */
 function BrandLayer({ glass = false }: { glass?: boolean }) {
   return (
     <div
@@ -54,8 +54,17 @@ function BrandLayer({ glass = false }: { glass?: boolean }) {
             glass ? "text-white/85" : "text-muted-foreground",
           )}
         >
-          <Mail className="h-4 w-4 shrink-0" />
-          <p className="truncate text-sm font-medium">{CONTACT_EMAIL}</p>
+          {SOCIAL_LINKS.map(({ href, Icon }) => (
+            <a
+              key={href}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className={cn("mx-0.5", glass ? "hover:text-white" : "hover:text-foreground")}
+            >
+              <Icon className="h-5 w-5" />
+            </a>
+          ))}
         </div>
 
         <Link
@@ -76,17 +85,8 @@ function BrandLayer({ glass = false }: { glass?: boolean }) {
             glass ? "text-white/85" : "text-muted-foreground",
           )}
         >
-          {SOCIAL_LINKS.map(({ href, Icon }) => (
-            <a
-              key={href}
-              href={href}
-              target="_blank"
-              rel="noreferrer"
-              className={cn("mx-0.5", glass ? "hover:text-white" : "hover:text-foreground")}
-            >
-              <Icon className="h-5 w-5" />
-            </a>
-          ))}
+          <Mail className="h-4 w-4 shrink-0" />
+          <p className="truncate text-sm font-medium">{CONTACT_EMAIL}</p>
         </div>
       </div>
     </div>

@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formatEnumLabel } from "@/lib/admin/labels";
 
 const STATUSES = ["pending", "approved", "rejected"] as const;
 
@@ -90,7 +91,7 @@ export function WholesaleSellerForm({
                 <SelectContent>
                   {STATUSES.map((status) => (
                     <SelectItem key={status} value={status}>
-                      {status}
+                      {formatEnumLabel(status)}
                     </SelectItem>
                   ))}
                 </SelectContent>

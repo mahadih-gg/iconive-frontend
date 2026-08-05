@@ -1,17 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { PlusIcon } from "lucide-react";
+import { useMemo } from "react";
 import { parseAsStringEnum, useQueryState } from "nuqs";
 
 import { AdminDataTable, type AdminColumn } from "@/components/admin/shared/AdminDataTable";
 import { AdminFormSheet } from "@/components/admin/shared/AdminFormSheet";
 import { AdminPageHeader } from "@/components/admin/shared/AdminPageHeader";
-import { ConfirmDeleteDialog } from "@/components/admin/shared/ConfirmDeleteDialog";
 import { RowActions } from "@/components/admin/shared/RowActions";
 import { StatusBadge } from "@/components/admin/shared/StatusBadge";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   useAdminAffiliateApplications,
@@ -24,33 +21,10 @@ import type {
   AdminAffiliateProgram,
 } from "@/types/admin";
 
-import {
-  AffiliateApplicationForm,
-  type AffiliateApplicationFormValues,
-} from "./AffiliateApplicationForm";
-import {
-  AffiliateProgramForm,
-  type AffiliateProgramFormValues,
-} from "./AffiliateProgramForm";
+import { AffiliateApplicationDetail } from "./AffiliateApplicationDetail";
+import { AffiliateProgramDetail } from "./AffiliateProgramDetail";
 
 type AffiliateTab = "applications" | "programs";
-
-const DEFAULT_APPLICATION_VALUES: AffiliateApplicationFormValues = {
-  name: "",
-  email: "",
-  phone: "",
-  message: "",
-  program: "",
-  status: "pending",
-};
-
-const DEFAULT_PROGRAM_VALUES: AffiliateProgramFormValues = {
-  label: "",
-  title: "",
-  description: "",
-  image: "",
-  isActive: true,
-};
 
 export function AffiliatesView() {
   const [tab, setTab] = useQueryState(
@@ -64,30 +38,20 @@ export function AffiliatesView() {
   const programsHook = useAdminAffiliatePrograms();
   const sheet = useAdminSheet();
 
-  const [deleteTarget, setDeleteTarget] = useState<{
-    tab: AffiliateTab;
-    id: string;
-  } | null>(null);
-
-  const editingApplication = useMemo(
+  const viewingApplication = useMemo(
     () =>
-      tab === "applications" && sheet.mode === "edit" && sheet.id
+      tab === "applications" && sheet.mode === "view" && sheet.id
         ? applicationsHook.items.find((item) => item._id === sheet.id)
         : undefined,
     [applicationsHook.items, sheet.id, sheet.mode, tab],
   );
 
-  const editingProgram = useMemo(
+  const viewingProgram = useMemo(
     () =>
-      tab === "programs" && sheet.mode === "edit" && sheet.id
+      tab === "programs" && sheet.mode === "view" && sheet.id
         ? programsHook.items.find((item) => item._id === sheet.id)
         : undefined,
     [programsHook.items, sheet.id, sheet.mode, tab],
-  );
-
-  const programOptions = useMemo(
-    () => programsHook.items.map((program) => program.title),
-    [programsHook.items],
   );
 
   const applicationColumns: AdminColumn<AdminAffiliateApplication>[] = [
@@ -136,10 +100,7 @@ export function AffiliatesView() {
       header: "",
       className: "w-12 text-right",
       cell: (row) => (
-        <RowActions
-          onEdit={() => sheet.openEdit(row._id)}
-          onDelete={() => setDeleteTarget({ tab: "applications", id: row._id })}
-        />
+        <RowActions onView={() => sheet.openView(row._id)} />
       ),
     },
   ];
@@ -177,92 +138,21 @@ export function AffiliatesView() {
       header: "",
       className: "w-12 text-right",
       cell: (row) => (
-        <RowActions
-          onEdit={() => sheet.openEdit(row._id)}
-          onDelete={() => setDeleteTarget({ tab: "programs", id: row._id })}
-        />
+        <RowActions onView={() => sheet.openView(row._id)} />
       ),
     },
   ];
-
-  async function handleApplicationSubmit(values: AffiliateApplicationFormValues) {
-    if (sheet.mode === "create") {
-      await applicationsHook.create({
-        name: values.name,
-        email: values.email,
-        phone: values.phone,
-        message: values.message,
-        program: values.program,
-        status: values.status,
-      });
-    } else if (sheet.mode === "edit" && sheet.id) {
-      await applicationsHook.update(sheet.id, { status: values.status });
-    }
-    sheet.close();
-  }
-
-  async function handleProgramSubmit(values: AffiliateProgramFormValues) {
-    if (sheet.mode === "create") {
-      await programsHook.create(values);
-    } else if (sheet.mode === "edit" && sheet.id) {
-      await programsHook.update(sheet.id, values);
-    }
-    sheet.close();
-  }
 
   function handleTabChange(nextTab: string) {
     sheet.close();
     void setTab(nextTab as AffiliateTab);
   }
 
-  const applicationDefaults: AffiliateApplicationFormValues = editingApplication
-    ? {
-        name: editingApplication.name,
-        email: editingApplication.email,
-        phone: editingApplication.phone ?? "",
-        message: editingApplication.message,
-        program: editingApplication.program,
-        status: editingApplication.status,
-      }
-    : {
-        ...DEFAULT_APPLICATION_VALUES,
-        program: programOptions[0] ?? "",
-      };
-
-  const programDefaults: AffiliateProgramFormValues = editingProgram
-    ? {
-        label: editingProgram.label,
-        title: editingProgram.title,
-        description: editingProgram.description,
-        image: editingProgram.image,
-        isActive: editingProgram.isActive,
-      }
-    : DEFAULT_PROGRAM_VALUES;
-
-  const isSubmitting =
-    tab === "applications"
-      ? applicationsHook.isCreating || applicationsHook.isUpdating
-      : programsHook.isCreating || programsHook.isUpdating;
-
-  const isDeleting =
-    deleteTarget?.tab === "applications"
-      ? applicationsHook.isDeleting
-      : programsHook.isDeleting;
-
   return (
     <div className="flex flex-col gap-6">
       <AdminPageHeader
         title="Affiliates"
-        description="Manage affiliate programs and review applications"
-        actions={
-          <Button
-            onClick={() => sheet.openCreate()}
-            disabled={tab === "applications" && programOptions.length === 0}
-          >
-            <PlusIcon data-icon="inline-start" />
-            {tab === "applications" ? "Add application" : "Add program"}
-          </Button>
-        }
+        description="Browse affiliate programs and applications"
       />
 
       <Tabs value={tab} onValueChange={handleTabChange}>
@@ -287,78 +177,35 @@ export function AffiliatesView() {
             data={programsHook.items}
             isLoading={programsHook.isLoading}
             emptyTitle="No programs"
-            emptyDescription="Create affiliate programs for applicants to choose from."
+            emptyDescription="Affiliate programs will appear here."
           />
         </TabsContent>
       </Tabs>
 
       <AdminFormSheet
-        open={sheet.isOpen}
+        open={sheet.isOpen && sheet.mode === "view"}
         onOpenChange={(open) => {
           if (!open) sheet.close();
         }}
         title={
-          tab === "applications"
-            ? sheet.mode === "create"
-              ? "Create application"
-              : "Review application"
-            : sheet.mode === "create"
-              ? "Create program"
-              : "Edit program"
+          tab === "applications" ? "View application" : "View program"
         }
         description={
           tab === "applications"
-            ? "Review applicant details and update approval status."
-            : "Configure affiliate program content shown on the site."
+            ? "Full affiliate application details."
+            : "Full affiliate program details."
         }
-        formId={
-          tab === "applications"
-            ? "admin-affiliate-application-form"
-            : "admin-affiliate-program-form"
-        }
-        mode={sheet.mode}
-        isSubmitting={isSubmitting}
+        mode="view"
+        hideSubmit
+        cancelLabel="Close"
       >
-        {tab === "applications" ? (
-          <AffiliateApplicationForm
-            formId="admin-affiliate-application-form"
-            key={`app-${sheet.mode}-${sheet.id ?? "new"}`}
-            mode={sheet.mode ?? "create"}
-            defaultValues={applicationDefaults}
-            application={editingApplication}
-            programOptions={programOptions}
-            onSubmit={handleApplicationSubmit}
-          />
-        ) : (
-          <AffiliateProgramForm
-            formId="admin-affiliate-program-form"
-            key={`prog-${sheet.mode}-${sheet.id ?? "new"}`}
-            defaultValues={programDefaults}
-            onSubmit={handleProgramSubmit}
-          />
-        )}
+        {tab === "applications" && viewingApplication ? (
+          <AffiliateApplicationDetail application={viewingApplication} />
+        ) : null}
+        {tab === "programs" && viewingProgram ? (
+          <AffiliateProgramDetail program={viewingProgram} />
+        ) : null}
       </AdminFormSheet>
-
-      <ConfirmDeleteDialog
-        open={deleteTarget !== null}
-        onOpenChange={(open) => {
-          if (!open) setDeleteTarget(null);
-        }}
-        title={
-          deleteTarget?.tab === "programs" ? "Delete program?" : "Delete application?"
-        }
-        description="This item will be permanently removed."
-        isLoading={isDeleting}
-        onConfirm={async () => {
-          if (!deleteTarget) return;
-          if (deleteTarget.tab === "applications") {
-            await applicationsHook.remove(deleteTarget.id);
-          } else {
-            await programsHook.remove(deleteTarget.id);
-          }
-          setDeleteTarget(null);
-        }}
-      />
     </div>
   );
 }

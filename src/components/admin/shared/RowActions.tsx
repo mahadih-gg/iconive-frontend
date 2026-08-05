@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontalIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { EyeIcon, MoreHorizontalIcon, PencilIcon, Trash2Icon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,15 +12,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface RowActionsProps {
+  onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  viewLabel?: string;
   editLabel?: string;
   deleteLabel?: string;
 }
 
 export function RowActions({
+  onView,
   onEdit,
   onDelete,
+  viewLabel = "View",
   editLabel = "Edit",
   deleteLabel = "Delete",
 }: RowActionsProps) {
@@ -33,6 +37,12 @@ export function RowActions({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
+          {onView ? (
+            <DropdownMenuItem onClick={onView}>
+              <EyeIcon />
+              {viewLabel}
+            </DropdownMenuItem>
+          ) : null}
           {onEdit ? (
             <DropdownMenuItem onClick={onEdit}>
               <PencilIcon />

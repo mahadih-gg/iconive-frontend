@@ -1,24 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { PlusIcon, StarIcon } from "lucide-react";
+import { useMemo } from "react";
+import { StarIcon } from "lucide-react";
 
 import { AdminDataTable } from "@/components/admin/shared/AdminDataTable";
 import { AdminFormSheet } from "@/components/admin/shared/AdminFormSheet";
 import { AdminPageHeader } from "@/components/admin/shared/AdminPageHeader";
-import { ConfirmDeleteDialog } from "@/components/admin/shared/ConfirmDeleteDialog";
 import { RowActions } from "@/components/admin/shared/RowActions";
 import { StatusBadge } from "@/components/admin/shared/StatusBadge";
-import { Button } from "@/components/ui/button";
 import { useAdminReviews } from "@/hooks/admin/useAdminResources";
 import { useAdminSheet } from "@/hooks/admin/useAdminSheet";
 
-import {
-  emptyReviewFormValues,
-  ReviewForm,
-  type ReviewFormValues,
-  toReviewFormValues,
-} from "./ReviewForm";
+import { ReviewDetail } from "./ReviewDetail";
 
 function RatingStars({ rating }: { rating: number }) {
   return (
@@ -30,52 +23,22 @@ function RatingStars({ rating }: { rating: number }) {
 }
 
 export function ReviewsView() {
-  const { items, isLoading, create, update, remove, isCreating, isUpdating, isDeleting } =
-    useAdminReviews();
+  const { items, isLoading } = useAdminReviews();
   const sheet = useAdminSheet();
-  const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const editingItem =
-    sheet.mode === "edit" && sheet.id
-      ? items.find((item) => item._id === sheet.id)
-      : undefined;
-
-  async function handleSubmit(values: ReviewFormValues) {
-    const payload = {
-      name: values.name,
-      rating: values.rating,
-      title: values.title,
-      comment: values.comment,
-      productId: values.productId?.trim() || undefined,
-      verified: values.verified,
-      isPublished: values.isPublished,
-    };
-
-    if (sheet.mode === "create") {
-      await create(payload);
-    } else if (sheet.id) {
-      await update(sheet.id, payload);
-    }
-    sheet.close();
-  }
-
-  async function handleDelete() {
-    if (!deleteId) return;
-    await remove(deleteId);
-    setDeleteId(null);
-  }
+  const viewingItem = useMemo(
+    () =>
+      sheet.mode === "view" && sheet.id
+        ? items.find((item) => item._id === sheet.id)
+        : undefined,
+    [items, sheet.id, sheet.mode],
+  );
 
   return (
     <div className="flex flex-col gap-6">
       <AdminPageHeader
         title="Reviews"
-        description="Moderate customer reviews and publishing status"
-        actions={
-          <Button onClick={sheet.openCreate}>
-            <PlusIcon data-icon="inline-start" />
-            New review
-          </Button>
-        }
+        description="Browse and review customer feedback"
       />
 
       <AdminDataTable
@@ -119,18 +82,14 @@ export function ReviewsView() {
             header: "",
             className: "w-12",
             cell: (row) => (
-              <RowActions
-                editLabel="Moderate"
-                onEdit={() => sheet.openEdit(row._id)}
-                onDelete={() => setDeleteId(row._id)}
-              />
+              <RowActions onView={() => sheet.openView(row._id)} />
             ),
           },
         ]}
         data={items}
         isLoading={isLoading}
         emptyTitle="No reviews"
-        emptyDescription="Customer reviews will appear here for moderation."
+        emptyDescription="Customer reviews will appear here."
         mobileCard={(row) => (
           <div className="flex flex-col gap-3">
             <div className="flex items-start justify-between gap-3">
@@ -147,49 +106,25 @@ export function ReviewsView() {
               {row.comment}
             </p>
             <div className="flex justify-end">
-              <RowActions
-                editLabel="Moderate"
-                onEdit={() => sheet.openEdit(row._id)}
-                onDelete={() => setDeleteId(row._id)}
-              />
+              <RowActions onView={() => sheet.openView(row._id)} />
             </div>
           </div>
         )}
       />
 
       <AdminFormSheet
-        open={sheet.isOpen}
-        onOpenChange={(open) => !open && sheet.close()}
-        title={sheet.mode === "create" ? "New review" : "Moderate review"}
-        description={
-          sheet.mode === "create"
-            ? "Add a customer review manually."
-            : "Update review content and publishing status."
-        }
-        formId="admin-review-form"
-        mode={sheet.mode}
-        isSubmitting={isCreating || isUpdating}
+        open={sheet.isOpen && sheet.mode === "view"}
+        onOpenChange={(open) => {
+          if (!open) sheet.close();
+        }}
+        title="View review"
+        description="Full customer review details."
+        mode="view"
+        hideSubmit
+        cancelLabel="Close"
       >
-        <ReviewForm
-          formId="admin-review-form"
-          key={`${sheet.mode}-${sheet.id ?? "new"}`}
-          defaultValues={
-            editingItem
-              ? toReviewFormValues(editingItem)
-              : emptyReviewFormValues
-          }
-          onSubmit={handleSubmit}
-        />
+        {viewingItem ? <ReviewDetail review={viewingItem} /> : null}
       </AdminFormSheet>
-
-      <ConfirmDeleteDialog
-        open={deleteId !== null}
-        onOpenChange={(open) => !open && setDeleteId(null)}
-        title="Delete review?"
-        description="This review will be permanently removed."
-        onConfirm={handleDelete}
-        isLoading={isDeleting}
-      />
     </div>
   );
 }

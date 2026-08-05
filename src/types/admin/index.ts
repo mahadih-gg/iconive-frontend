@@ -131,6 +131,8 @@ export interface AdminWholesaleInquiry {
   phone?: string;
   message: string;
   status: "Pending" | "Contacted" | "Closed";
+  reply?: string;
+  repliedAt?: string;
   createdAt: string;
 }
 

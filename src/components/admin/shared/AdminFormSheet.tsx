@@ -22,12 +22,15 @@ interface AdminFormSheetProps {
   description?: string;
   children: ReactNode;
   /** Form element id — footer submit button targets this form */
-  formId: string;
+  formId?: string;
   mode?: AdminSheetMode | null;
   isSubmitting?: boolean;
   createLabel?: string;
   updateLabel?: string;
+  viewLabel?: string;
   cancelLabel?: string;
+  /** Hide the primary submit action (read-only view sheets). */
+  hideSubmit?: boolean;
   contentClassName?: string;
 }
 
@@ -42,10 +45,13 @@ export function AdminFormSheet({
   isSubmitting = false,
   createLabel = "Create",
   updateLabel = "Update",
+  viewLabel = "Save",
   cancelLabel = "Cancel",
+  hideSubmit = false,
   contentClassName,
 }: AdminFormSheetProps) {
-  const submitLabel = mode === "edit" ? updateLabel : createLabel;
+  const submitLabel =
+    mode === "edit" ? updateLabel : mode === "view" ? viewLabel : createLabel;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -78,15 +84,17 @@ export function AdminFormSheet({
           >
             {cancelLabel}
           </Button>
-          <Button
-            type="submit"
-            form={formId}
-            className="rounded-none"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
-            {submitLabel}
-          </Button>
+          {!hideSubmit ? (
+            <Button
+              type="submit"
+              form={formId}
+              className="rounded-none"
+              disabled={isSubmitting || !formId}
+            >
+              {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
+              {submitLabel}
+            </Button>
+          ) : null}
         </SheetFooter>
       </SheetContent>
     </Sheet>

@@ -376,6 +376,9 @@ export const adminWholesaleInquiriesSeed: AdminWholesaleInquiry[] = [
     email: "omar@retail.bd",
     message: "Interested in gents collection wholesale pricing.",
     status: "Contacted",
+    reply:
+      "Thanks for reaching out — we've emailed a wholesale price list for the gents collection.",
+    repliedAt: "2026-07-29T09:30:00.000Z",
     createdAt: "2026-07-28T14:00:00.000Z",
   },
 ];

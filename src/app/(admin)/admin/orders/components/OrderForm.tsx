@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { formatEnumLabel } from "@/lib/admin/labels";
 import { formatCurrency } from "@/utils/formatters";
 import type { AdminOrder } from "@/types/admin";
 
@@ -57,10 +58,6 @@ interface OrderFormProps {
   defaultValues: OrderFormValues;
   order?: AdminOrder;
   onSubmit: (values: OrderFormValues) => void | Promise<void>;
-}
-
-function statusLabel(value: string) {
-  return value.replaceAll("_", " ");
 }
 
 export function OrderForm({
@@ -177,7 +174,7 @@ export function OrderForm({
                 <SelectContent>
                   {ORDER_STATUSES.map((status) => (
                     <SelectItem key={status} value={status}>
-                      {statusLabel(status)}
+                      {formatEnumLabel(status)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -200,7 +197,7 @@ export function OrderForm({
                 <SelectContent>
                   {PAYMENT_STATUSES.map((status) => (
                     <SelectItem key={status} value={status}>
-                      {statusLabel(status)}
+                      {formatEnumLabel(status)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -223,7 +220,7 @@ export function OrderForm({
                 <SelectContent>
                   {ORDER_STATUSES.map((status) => (
                     <SelectItem key={status} value={status}>
-                      {statusLabel(status)}
+                      {formatEnumLabel(status)}
                     </SelectItem>
                   ))}
                 </SelectContent>

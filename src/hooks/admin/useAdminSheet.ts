@@ -2,11 +2,11 @@
 
 import { parseAsString, parseAsStringEnum, useQueryStates } from "nuqs";
 
-export type AdminSheetMode = "create" | "edit";
+export type AdminSheetMode = "create" | "edit" | "view";
 
 export function useAdminSheet() {
   const [params, setParams] = useQueryStates({
-    sheet: parseAsStringEnum<AdminSheetMode>(["create", "edit"]),
+    sheet: parseAsStringEnum<AdminSheetMode>(["create", "edit", "view"]),
     id: parseAsString,
   });
 
@@ -22,6 +22,10 @@ export function useAdminSheet() {
     void setParams({ sheet: "edit", id: editId });
   }
 
+  function openView(viewId: string) {
+    void setParams({ sheet: "view", id: viewId });
+  }
+
   function close() {
     void setParams({ sheet: null, id: null });
   }
@@ -32,6 +36,7 @@ export function useAdminSheet() {
     id,
     openCreate,
     openEdit,
+    openView,
     close,
     setParams,
   };

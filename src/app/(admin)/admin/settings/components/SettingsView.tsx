@@ -1,27 +1,42 @@
 "use client";
 
-import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { LinkIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { useEffect } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import type { IconType } from "react-icons";
+import { FaFacebook, FaLinkedinIn, FaYoutube } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { PiInstagramLogoFill } from "react-icons/pi";
+import { TbBrandWhatsappFilled } from "react-icons/tb";
 import { z } from "zod";
 
 import { AdminPageHeader } from "@/components/admin/shared/AdminPageHeader";
 import { Button } from "@/components/ui/button";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldSet,
   FieldLegend,
+  FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
-import { Textarea } from "@/components/ui/textarea";
 import { useAdminSettings } from "@/hooks/admin/useAdminResources";
 import type { AdminSettings } from "@/types/admin";
+
+const socialLinkSchema = z.object({
+  label: z.string().min(1, "Label is required"),
+  href: z.string().url("Enter a valid URL"),
+});
 
 const schema = z.object({
   deliveryCharge: z.coerce.number().min(0, "Must be 0 or greater"),
@@ -29,28 +44,23 @@ const schema = z.object({
   freeShippingThreshold: z.coerce.number().min(0, "Must be 0 or greater"),
   contactEmail: z.string().email("Enter a valid email"),
   whatsappNumber: z.string().min(1, "WhatsApp number is required"),
-  socialLinksText: z.string(),
+  socialLinks: z.array(socialLinkSchema),
 });
 
 type SettingsFormValues = z.infer<typeof schema>;
 
-function toSocialLinksText(links: AdminSettings["socialLinks"]) {
-  return links.map((link) => `${link.label}|${link.href}`).join("\n");
-}
+const SOCIAL_ICONS: { match: RegExp; Icon: IconType }[] = [
+  { match: /facebook/i, Icon: FaFacebook },
+  { match: /instagram/i, Icon: PiInstagramLogoFill },
+  { match: /youtube|youtu\.be/i, Icon: FaYoutube },
+  { match: /\bx\b|twitter/i, Icon: FaXTwitter },
+  { match: /linkedin/i, Icon: FaLinkedinIn },
+  { match: /whatsapp/i, Icon: TbBrandWhatsappFilled },
+];
 
-function parseSocialLinks(text: string): AdminSettings["socialLinks"] {
-  return text
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const [label, ...hrefParts] = line.split("|");
-      return {
-        label: label.trim(),
-        href: hrefParts.join("|").trim(),
-      };
-    })
-    .filter((link) => link.label && link.href);
+function getSocialIcon(label: string, href = ""): IconType {
+  const haystack = `${label} ${href}`;
+  return SOCIAL_ICONS.find(({ match }) => match.test(haystack))?.Icon ?? LinkIcon;
 }
 
 const emptyFormValues: SettingsFormValues = {
@@ -59,7 +69,7 @@ const emptyFormValues: SettingsFormValues = {
   freeShippingThreshold: 0,
   contactEmail: "",
   whatsappNumber: "",
-  socialLinksText: "",
+  socialLinks: [],
 };
 
 export function SettingsView() {
@@ -70,6 +80,11 @@ export function SettingsView() {
     defaultValues: emptyFormValues,
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "socialLinks",
+  });
+
   useEffect(() => {
     if (!settings) return;
     form.reset({
@@ -78,15 +93,18 @@ export function SettingsView() {
       freeShippingThreshold: settings.freeShippingThreshold,
       contactEmail: settings.contactEmail,
       whatsappNumber: settings.whatsappNumber,
-      socialLinksText: toSocialLinksText(settings.socialLinks),
+      socialLinks: settings.socialLinks.map((link) => ({ ...link })),
     });
   }, [settings, form]);
 
   async function onSubmit(values: SettingsFormValues) {
-    const { socialLinksText, ...rest } = values;
+    const { socialLinks, ...rest } = values;
     await update({
       ...rest,
-      socialLinks: parseSocialLinks(socialLinksText),
+      socialLinks: socialLinks.map((link) => ({
+        label: link.label.trim(),
+        href: link.href.trim(),
+      })) satisfies AdminSettings["socialLinks"],
     });
   }
 
@@ -111,119 +129,186 @@ export function SettingsView() {
 
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-2xl border border-border bg-card p-6"
+        className="grid grid-cols-1 xl:grid-cols-2 gap-6"
       >
-        <FieldSet>
-          <FieldLegend>Shipping &amp; pricing</FieldLegend>
-          <FieldGroup className="gap-4">
-            <Field data-invalid={!!form.formState.errors.deliveryCharge}>
-              <FieldLabel htmlFor="settings-delivery-charge">
-                Delivery charge
-              </FieldLabel>
-              <Input
-                id="settings-delivery-charge"
-                type="number"
-                min={0}
-                step="0.01"
-                aria-invalid={!!form.formState.errors.deliveryCharge}
-                {...form.register("deliveryCharge")}
-              />
-              <FieldError>
-                {form.formState.errors.deliveryCharge?.message}
-              </FieldError>
-            </Field>
+        <div className="border border-border bg-card p-6">
+          <FieldSet>
+            <FieldLegend>Shipping &amp; pricing</FieldLegend>
+            <FieldGroup className="gap-4">
+              <Field data-invalid={!!form.formState.errors.deliveryCharge}>
+                <FieldLabel htmlFor="settings-delivery-charge">
+                  Delivery charge
+                </FieldLabel>
+                <Input
+                  id="settings-delivery-charge"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  aria-invalid={!!form.formState.errors.deliveryCharge}
+                  {...form.register("deliveryCharge")}
+                />
+                <FieldError>
+                  {form.formState.errors.deliveryCharge?.message}
+                </FieldError>
+              </Field>
 
-            <Field data-invalid={!!form.formState.errors.fxRate}>
-              <FieldLabel htmlFor="settings-fx-rate">FX rate</FieldLabel>
-              <Input
-                id="settings-fx-rate"
-                type="number"
-                min={0}
-                step="0.01"
-                aria-invalid={!!form.formState.errors.fxRate}
-                {...form.register("fxRate")}
-              />
-              <FieldError>{form.formState.errors.fxRate?.message}</FieldError>
-            </Field>
+              <Field data-invalid={!!form.formState.errors.fxRate}>
+                <FieldLabel htmlFor="settings-fx-rate">FX rate</FieldLabel>
+                <Input
+                  id="settings-fx-rate"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  aria-invalid={!!form.formState.errors.fxRate}
+                  {...form.register("fxRate")}
+                />
+                <FieldError>{form.formState.errors.fxRate?.message}</FieldError>
+              </Field>
 
-            <Field data-invalid={!!form.formState.errors.freeShippingThreshold}>
-              <FieldLabel htmlFor="settings-free-shipping">
-                Free shipping threshold
-              </FieldLabel>
-              <Input
-                id="settings-free-shipping"
-                type="number"
-                min={0}
-                step="0.01"
-                aria-invalid={!!form.formState.errors.freeShippingThreshold}
-                {...form.register("freeShippingThreshold")}
-              />
-              <FieldError>
-                {form.formState.errors.freeShippingThreshold?.message}
-              </FieldError>
-            </Field>
-          </FieldGroup>
-        </FieldSet>
+              <Field data-invalid={!!form.formState.errors.freeShippingThreshold}>
+                <FieldLabel htmlFor="settings-free-shipping">
+                  Free shipping threshold
+                </FieldLabel>
+                <Input
+                  id="settings-free-shipping"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  aria-invalid={!!form.formState.errors.freeShippingThreshold}
+                  {...form.register("freeShippingThreshold")}
+                />
+                <FieldError>
+                  {form.formState.errors.freeShippingThreshold?.message}
+                </FieldError>
+              </Field>
+            </FieldGroup>
+          </FieldSet>
 
-        <FieldSet className="mt-8">
-          <FieldLegend>Contact</FieldLegend>
-          <FieldGroup className="gap-4">
-            <Field data-invalid={!!form.formState.errors.contactEmail}>
-              <FieldLabel htmlFor="settings-contact-email">
-                Contact email
-              </FieldLabel>
-              <Input
-                id="settings-contact-email"
-                type="email"
-                aria-invalid={!!form.formState.errors.contactEmail}
-                {...form.register("contactEmail")}
-              />
-              <FieldError>
-                {form.formState.errors.contactEmail?.message}
-              </FieldError>
-            </Field>
+          <FieldSet className="mt-8">
+            <FieldLegend>Contact</FieldLegend>
+            <FieldGroup className="gap-4">
+              <Field data-invalid={!!form.formState.errors.contactEmail}>
+                <FieldLabel htmlFor="settings-contact-email">
+                  Contact email
+                </FieldLabel>
+                <Input
+                  id="settings-contact-email"
+                  type="email"
+                  aria-invalid={!!form.formState.errors.contactEmail}
+                  {...form.register("contactEmail")}
+                />
+                <FieldError>
+                  {form.formState.errors.contactEmail?.message}
+                </FieldError>
+              </Field>
 
-            <Field data-invalid={!!form.formState.errors.whatsappNumber}>
-              <FieldLabel htmlFor="settings-whatsapp">
-                WhatsApp number
-              </FieldLabel>
-              <Input
-                id="settings-whatsapp"
-                aria-invalid={!!form.formState.errors.whatsappNumber}
-                {...form.register("whatsappNumber")}
-              />
-              <FieldError>
-                {form.formState.errors.whatsappNumber?.message}
-              </FieldError>
-            </Field>
-          </FieldGroup>
-        </FieldSet>
+              <Field data-invalid={!!form.formState.errors.whatsappNumber}>
+                <FieldLabel htmlFor="settings-whatsapp">
+                  WhatsApp number
+                </FieldLabel>
+                <Input
+                  id="settings-whatsapp"
+                  aria-invalid={!!form.formState.errors.whatsappNumber}
+                  {...form.register("whatsappNumber")}
+                />
+                <FieldError>
+                  {form.formState.errors.whatsappNumber?.message}
+                </FieldError>
+              </Field>
+            </FieldGroup>
+          </FieldSet>
+        </div>
 
-        <FieldSet className="mt-8">
-          <FieldLegend>Social links</FieldLegend>
-          <FieldGroup className="gap-4">
-            <Field data-invalid={!!form.formState.errors.socialLinksText}>
-              <FieldLabel htmlFor="settings-social-links">
-                Social links
-              </FieldLabel>
-              <Textarea
-                id="settings-social-links"
-                rows={5}
-                placeholder={"Facebook|https://facebook.com\nInstagram|https://instagram.com"}
-                aria-invalid={!!form.formState.errors.socialLinksText}
-                {...form.register("socialLinksText")}
-              />
-              <FieldDescription>
-                One link per line in the format Label|href
-              </FieldDescription>
-              <FieldError>
-                {form.formState.errors.socialLinksText?.message}
-              </FieldError>
-            </Field>
-          </FieldGroup>
-        </FieldSet>
+        <div className="border border-border bg-card p-6">
+          <FieldSet>
+            <div className="flex items-center justify-between gap-3">
+              <FieldLegend>Social links</FieldLegend>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="rounded-none"
+                onClick={() => append({ label: "", href: "https://" })}
+              >
+                <PlusIcon data-icon="inline-start" />
+                Add link
+              </Button>
+            </div>
 
-        <div className="mt-8">
+            <FieldGroup className="gap-4">
+              {fields.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No social links yet. Add one to get started.
+                </p>
+              ) : null}
+
+              {fields.map((field, index) => {
+                const label = form.watch(`socialLinks.${index}.label`);
+                const href = form.watch(`socialLinks.${index}.href`);
+                const Icon = getSocialIcon(label, href);
+                const labelError =
+                  form.formState.errors.socialLinks?.[index]?.label;
+                const hrefError =
+                  form.formState.errors.socialLinks?.[index]?.href;
+
+                return (
+                  <div
+                    key={field.id}
+                    className="flex flex-col gap-2 border border-border p-3"
+                  >
+                    <Field data-invalid={!!labelError}>
+                      <FieldLabel htmlFor={`settings-social-label-${index}`}>
+                        Label
+                      </FieldLabel>
+                      <Input
+                        id={`settings-social-label-${index}`}
+                        placeholder="Facebook"
+                        aria-invalid={!!labelError}
+                        {...form.register(`socialLinks.${index}.label`)}
+                      />
+                      <FieldError>{labelError?.message}</FieldError>
+                    </Field>
+
+                    <Field data-invalid={!!hrefError}>
+                      <FieldLabel htmlFor={`settings-social-href-${index}`}>
+                        URL
+                      </FieldLabel>
+                      <InputGroup
+                        className="rounded-none"
+                        data-disabled={undefined}
+                      >
+                        <InputGroupAddon align="inline-start">
+                          <Icon aria-hidden />
+                        </InputGroupAddon>
+                        <InputGroupInput
+                          id={`settings-social-href-${index}`}
+                          type="url"
+                          placeholder="https://"
+                          aria-invalid={!!hrefError}
+                          {...form.register(`socialLinks.${index}.href`)}
+                        />
+                        <InputGroupAddon align="inline-end">
+                          <InputGroupButton
+                            type="button"
+                            variant="ghost"
+                            size="icon-xs"
+                            aria-label={`Remove ${label || "social link"}`}
+                            onClick={() => remove(index)}
+                          >
+                            <Trash2Icon />
+                          </InputGroupButton>
+                        </InputGroupAddon>
+                      </InputGroup>
+                      <FieldError>{hrefError?.message}</FieldError>
+                    </Field>
+                  </div>
+                );
+              })}
+            </FieldGroup>
+          </FieldSet>
+        </div>
+
+        <div>
           <Button type="submit" disabled={isSaving}>
             {isSaving ? <Spinner data-icon="inline-start" /> : null}
             Save settings

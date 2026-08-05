@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { formatEnumLabel } from "@/lib/admin/labels";
 import { cn } from "@/lib/utils";
 
 type BadgeTone = "success" | "neutral" | "warning" | "danger" | "muted";
@@ -46,12 +47,12 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
     <Badge
       variant="outline"
       className={cn(
-        "rounded-none capitalize",
+        "rounded-none",
         TONE_CLASS[tone],
         className,
       )}
     >
-      {status.replaceAll("_", " ")}
+      {formatEnumLabel(status)}
     </Badge>
   );
 }
