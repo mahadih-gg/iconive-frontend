@@ -1,17 +1,18 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-import { BlogCard } from "@/components/common/BlogCard";
+import { BlogCard } from "@/components/blog/BlogCard";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import { Button } from "@/components/ui/button";
-import { BLOG_POSTS } from "@/data/blogs";
+import type { BlogPostMeta } from "@/types/blog";
 import { cn } from "@/lib/utils";
 
 interface BlogSectionProps {
+  posts: BlogPostMeta[];
   className?: string;
 }
 
-export function BlogSection({ className }: BlogSectionProps) {
+export function BlogSection({ posts, className }: BlogSectionProps) {
   return (
     <section className={cn("bg-background px-4 py-8 sm:py-10", className)}>
       <div className="mx-auto max-w-7xl">
@@ -24,8 +25,8 @@ export function BlogSection({ className }: BlogSectionProps) {
         />
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-          {BLOG_POSTS.slice(0, 3).map((post) => (
-            <BlogCard key={post.id} post={post} />
+          {posts.map((post) => (
+            <BlogCard key={post.slug} post={post} />
           ))}
         </div>
 

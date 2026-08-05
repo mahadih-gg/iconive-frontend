@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Required for next-mdx-remote/rsc with Turbopack / Next 15+
+  transpilePackages: ["next-mdx-remote"],
   typescript: {
     ignoreBuildErrors: true,
   },

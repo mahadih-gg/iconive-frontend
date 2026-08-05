@@ -157,7 +157,11 @@ export interface AdminBlogPost {
   excerpt: string;
   image: string;
   slug: string;
-  body: string[];
+  author: string;
+  tags: string[];
+  featured: boolean;
+  /** TipTap HTML content */
+  body: string;
   published: boolean;
   createdAt: string;
 }

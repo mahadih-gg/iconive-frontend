@@ -13,19 +13,15 @@ import { Button } from "@/components/ui/button";
 import { useAdminBlog } from "@/hooks/admin/useAdminResources";
 import { useAdminSheet } from "@/hooks/admin/useAdminSheet";
 
+import { slugify } from "@/utils/slugify";
+
 import {
   BlogForm,
   emptyBlogFormValues,
+  toAdminBlogPayload,
   type BlogFormValues,
   toBlogFormValues,
 } from "./BlogForm";
-
-function parseBodyParagraphs(body: string): string[] {
-  return body
-    .split(/\n\s*\n/)
-    .map((paragraph) => paragraph.trim())
-    .filter(Boolean);
-}
 
 export function BlogView() {
   const { items, isLoading, create, update, remove, isCreating, isUpdating, isDeleting } =
@@ -40,13 +36,8 @@ export function BlogView() {
 
   async function handleSubmit(values: BlogFormValues) {
     const payload = {
-      category: values.category,
-      title: values.title,
-      excerpt: values.excerpt,
-      image: values.image,
-      slug: values.slug,
-      body: parseBodyParagraphs(values.body),
-      published: values.published,
+      ...toAdminBlogPayload(values),
+      slug: values.slug || slugify(values.title),
     };
 
     if (sheet.mode === "create") {
@@ -67,7 +58,7 @@ export function BlogView() {
     <div className="flex flex-col gap-6">
       <AdminPageHeader
         title="Blog"
-        description="Manage blog posts and publishing status"
+        description="Write and publish blog posts with the rich text editor"
         actions={
           <Button onClick={sheet.openCreate}>
             <PlusIcon data-icon="inline-start" />
@@ -82,7 +73,12 @@ export function BlogView() {
             key: "title",
             header: "Title",
             cell: (row) => (
-              <span className="font-medium">{row.title}</span>
+              <div className="min-w-0">
+                <p className="font-medium">{row.title}</p>
+                {row.featured ? (
+                  <p className="text-xs text-muted-foreground">Featured</p>
+                ) : null}
+              </div>
             ),
           },
           {
@@ -90,6 +86,12 @@ export function BlogView() {
             header: "Category",
             hideOnMobile: true,
             cell: (row) => row.category,
+          },
+          {
+            key: "author",
+            header: "Author",
+            hideOnMobile: true,
+            cell: (row) => row.author,
           },
           {
             key: "slug",
@@ -127,7 +129,10 @@ export function BlogView() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="font-medium">{row.title}</p>
-                <p className="text-sm text-muted-foreground">{row.category}</p>
+                <p className="text-sm text-muted-foreground">
+                  {row.category}
+                  {row.author ? ` · ${row.author}` : ""}
+                </p>
               </div>
               <StatusBadge status={row.published ? "published" : "pending"} />
             </div>
@@ -147,12 +152,15 @@ export function BlogView() {
         title={sheet.mode === "create" ? "New blog post" : "Edit blog post"}
         description={
           sheet.mode === "create"
-            ? "Add a new article to the blog."
-            : "Update post details and publishing status."
+            ? "Write a new article with the rich text editor."
+            : "Update content, cover, and publishing options."
         }
         formId="admin-blog-form"
         mode={sheet.mode}
         isSubmitting={isCreating || isUpdating}
+        contentClassName="sm:max-w-2xl"
+        createLabel="Create post"
+        updateLabel="Save changes"
       >
         <BlogForm
           formId="admin-blog-form"

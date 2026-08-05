@@ -1,7 +1,6 @@
 // DUMMY_DATA: admin seed — remove when backend is ready
 
 import { DUMMY_IDS } from "@/dummy/_ids.dummy";
-import { BLOG_POSTS } from "@/data/blogs";
 import { FAQS } from "@/data/faqs";
 import { PRODUCT_REVIEWS } from "@/data/reviews";
 import type {
@@ -410,17 +409,83 @@ export const adminCustomizeOrdersSeed: AdminCustomizeOrder[] = [
   },
 ];
 
-export const adminBlogSeed: AdminBlogPost[] = BLOG_POSTS.map((post) => ({
-  _id: `blog_${post.id}`,
-  category: post.category,
-  title: post.title,
-  excerpt: post.excerpt,
-  image: post.image,
-  slug: post.href.replace("/blog/", ""),
-  body: post.body,
-  published: true,
-  createdAt: now,
-}));
+export const adminBlogSeed: AdminBlogPost[] = [
+  {
+    _id: "blog_1",
+    category: "Basics",
+    title: "Basic Guide to Choosing Your Wig",
+    excerpt:
+      "Learn the fundamentals of picking and caring for your Iconive wig — from base types to everyday maintenance.",
+    image: "/Image/ImagesPage/ladies.webp",
+    slug: "basic-guide-to-choosing-your-wig",
+    author: "Iconive",
+    tags: ["Basics", "Guides"],
+    featured: true,
+    body: "<p>Choosing the right wig starts with understanding how it should feel, look, and fit in everyday life.</p><h2>Start with your lifestyle</h2><p>Begin with your lifestyle needs: how often you will wear the piece, whether you prefer a lighter base, and how much styling flexibility you want.</p><p>Daily care also matters. Gentle washing, proper storage, and the right products help your wig keep its shape and shine for longer.</p>",
+    published: true,
+    createdAt: now,
+  },
+  {
+    _id: "blog_2",
+    category: "Materials",
+    title: "Base & Hair Guide",
+    excerpt:
+      "Understand mono, lace, skin, silk, and mix bases, plus remy, virgin, and synthetic hair materials.",
+    image: "/Image/ImagesPage/why-choose-us.webp",
+    slug: "base-and-hair-guide",
+    author: "Iconive",
+    tags: ["Materials", "Guides"],
+    featured: true,
+    body: "<p>Your base and hair material determine comfort, durability, and how natural the finished look appears.</p><h2>Hair materials</h2><p>Hair options range from remy and virgin human hair to synthetic and blended fibers.</p><p>If you are unsure where to start, match the base to your scalp sensitivity and preferred parting.</p>",
+    published: true,
+    createdAt: now,
+  },
+  {
+    _id: "blog_3",
+    category: "Fit & Wear",
+    title: "Wearing & Size Guide",
+    excerpt:
+      "Measure your head correctly and follow wearing tips for all-day comfort and a natural finish.",
+    image: "/Image/ImagesPage/gents.webp",
+    slug: "wearing-and-size-guide",
+    author: "Iconive",
+    tags: ["Fit & Wear", "Guides"],
+    featured: true,
+    body: "<p>A well-fitted wig should feel secure without pressure points.</p><h2>Putting it on</h2><p>When putting your system on, align the front hairline carefully and secure according to your base type.</p><p>For all-day comfort, avoid overtightening, keep the scalp clean, and rotate wear styles if needed.</p>",
+    published: true,
+    createdAt: now,
+  },
+  {
+    _id: "blog_4",
+    category: "Texture",
+    title: "Hair Wave-Curl & Density Guide",
+    excerpt:
+      "Explore wave, curl, and density options to match your preferred style and coverage.",
+    image: "/Image/ImagesPage/ladies.webp",
+    slug: "hair-wave-curl-and-density-guide",
+    author: "Iconive",
+    tags: ["Texture", "Guides"],
+    featured: false,
+    body: "<p>Wave and curl patterns change the personality of a look — from soft movement to defined texture.</p><h2>Density basics</h2><p>Lower densities often look more natural for fine hair, while medium to higher densities create richer volume.</p><p>If you like versatility, start with a medium density and a soft wave.</p>",
+    published: true,
+    createdAt: now,
+  },
+  {
+    _id: "blog_5",
+    category: "Color",
+    title: "Find Your Perfect Shade",
+    excerpt:
+      "Explore our color families and shade guidance to choose the tone that flatters your look.",
+    image: "/Image/ImagesPage/why-choose-us.webp",
+    slug: "find-your-perfect-shade",
+    author: "Iconive",
+    tags: ["Color", "Guides"],
+    featured: false,
+    body: "<p>Color choice is personal — undertone, skin tone, and the contrast you want all influence what looks most flattering.</p><h2>Match depth first</h2><p>Natural-looking results often come from matching depth first, then refining undertone.</p><p>When in doubt, choose a shade close to your current or former hair color.</p>",
+    published: true,
+    createdAt: now,
+  },
+];
 
 export const adminAffiliateProgramsSeed: AdminAffiliateProgram[] = [
   {

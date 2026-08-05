@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils";
 
 const PATHS = [
   {
-    href: "/blog/3",
+    href: "/blog/wearing-and-size-guide",
     image: "/Image/guidemale/male.webp",
     label: "Gentlemen",
     title: "For Gentlemen",
@@ -32,7 +32,7 @@ const PATHS = [
       "Size, density, and style guidance for men's hair systems — from first fit to everyday wear.",
   },
   {
-    href: "/blog/1",
+    href: "/blog/basic-guide-to-choosing-your-wig",
     image: "/Image/guidefemale/female.webp",
     label: "Ladies",
     title: "For Ladies",
@@ -43,31 +43,31 @@ const PATHS = [
 
 const QUICK_GUIDES = [
   {
-    href: "/blog/1",
+    href: "/blog/basic-guide-to-choosing-your-wig",
     icon: BookOpen,
     title: "Basic Guide",
     text: "Fundamentals of choosing and caring for your Iconive wig.",
   },
   {
-    href: "/blog/2",
+    href: "/blog/base-and-hair-guide",
     icon: Sparkles,
     title: "Base & Hair",
     text: "Compare mono, lace, silk, and remy or virgin hair options.",
   },
   {
-    href: "/blog/3",
+    href: "/blog/wearing-and-size-guide",
     icon: Ruler,
     title: "Wearing & Size",
     text: "Measure correctly and wear for comfort and a natural finish.",
   },
   {
-    href: "/blog/4",
+    href: "/blog/hair-wave-curl-and-density-guide",
     icon: Waves,
     title: "Wave & Density",
     text: "Match curl, wave, and density to your preferred coverage.",
   },
   {
-    href: "/blog/5",
+    href: "/blog/find-your-perfect-shade",
     icon: Palette,
     title: "Color Guide",
     text: "Find the shade family that flatters your tone and style.",

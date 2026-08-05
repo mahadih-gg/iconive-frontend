@@ -14,10 +14,12 @@ import { SubscribeSection } from "@/components/common/SubscribeSection";
 import { TrustMarkersSection } from "@/components/common/TrustMarkersSection";
 import { WhyChooseUs } from "@/components/common/WhyChooseUs";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
+import type { BlogPostMeta } from "@/types/blog";
 import { HERO_VIDEOS } from "@/utils/constants";
 
 interface HomeViewProps {
   heroVideos?: readonly string[];
+  blogPosts: BlogPostMeta[];
 }
 
 const GENTS_CATEGORY_ID = "6432a3f8bc1e9c4115b67db5";
@@ -29,7 +31,10 @@ function getCategoryId(product: { category?: string | { _id: string; name: strin
   return "";
 }
 
-export function HomeView({ heroVideos = HERO_VIDEOS }: HomeViewProps) {
+export function HomeView({
+  heroVideos = HERO_VIDEOS,
+  blogPosts,
+}: HomeViewProps) {
   const { topSelling, trending, offers, stock, isLoading } = useFeaturedProducts();
 
   const collectionProducts = (offers.length > 0 ? offers : topSelling).slice(0, 8);
@@ -93,7 +98,7 @@ export function HomeView({ heroVideos = HERO_VIDEOS }: HomeViewProps) {
       />
       <WhyChooseUs />
       <CustomerReviews />
-      <BlogSection />
+      <BlogSection posts={blogPosts} />
       <FaqSection />
       <SubscribeSection />
 

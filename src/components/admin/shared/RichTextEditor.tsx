@@ -7,6 +7,7 @@ import StarterKit from "@tiptap/starter-kit";
 import {
   BoldIcon,
   Heading2Icon,
+  Heading3Icon,
   ItalicIcon,
   LinkIcon,
   ListIcon,
@@ -173,7 +174,7 @@ export function RichTextEditor({
           <ItalicIcon className="size-3.5" />
         </ToolbarButton>
         <ToolbarButton
-          label="Heading"
+          label="Heading 2"
           active={editor.isActive("heading", { level: 2 })}
           disabled={disabled}
           onClick={() =>
@@ -181,6 +182,16 @@ export function RichTextEditor({
           }
         >
           <Heading2Icon className="size-3.5" />
+        </ToolbarButton>
+        <ToolbarButton
+          label="Heading 3"
+          active={editor.isActive("heading", { level: 3 })}
+          disabled={disabled}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
+        >
+          <Heading3Icon className="size-3.5" />
         </ToolbarButton>
         <ToolbarButton
           label="Bullet list"
