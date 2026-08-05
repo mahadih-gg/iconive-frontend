@@ -158,7 +158,7 @@ export function BlogView() {
         formId="admin-blog-form"
         mode={sheet.mode}
         isSubmitting={isCreating || isUpdating}
-        contentClassName="sm:max-w-2xl"
+        contentClassName="w-full sm:max-w-[80%]"
         createLabel="Create post"
         updateLabel="Save changes"
       >
