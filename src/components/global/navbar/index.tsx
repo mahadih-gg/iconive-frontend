@@ -65,7 +65,7 @@ function BrandLayer({ glass = false }: { glass?: boolean }) {
             glass ? "text-white" : "text-black",
           )}
         >
-          <h1 className="font-heading font-medium tracking-[0.12em] text-2xl sm:text-3xl xl:text-5xl pt-2">
+          <h1 className="font-brand font-medium tracking-[0.12em] text-2xl sm:text-3xl xl:text-5xl pt-2">
             ICONIVE
           </h1>
         </Link>

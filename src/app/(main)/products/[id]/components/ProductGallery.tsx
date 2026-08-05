@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState, type MouseEvent } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,8 @@ interface ProductGalleryProps {
   discount?: number;
 }
 
+const ZOOM_SCALE = 2.4;
+
 export function ProductGallery({
   images,
   activeIndex,
@@ -20,21 +23,55 @@ export function ProductGallery({
   discount = 0,
 }: ProductGalleryProps) {
   const activeImage = images[activeIndex] ?? images[0] ?? "/Image/logo/logo.png";
+  const [isZooming, setIsZooming] = useState(false);
+  const [origin, setOrigin] = useState({ x: 50, y: 50 });
+
+  function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+
+    setOrigin({
+      x: ((event.clientX - rect.left) / rect.width) * 100,
+      y: ((event.clientY - rect.top) / rect.height) * 100,
+    });
+  }
+
+  function handleMouseEnter() {
+    setIsZooming(true);
+  }
+
+  function handleMouseLeave() {
+    setIsZooming(false);
+    setOrigin({ x: 50, y: 50 });
+  }
 
   return (
     <div className="flex flex-col gap-3 bg-[#f3eee6] p-3 sm:p-4 md:p-5">
-      <div className="relative aspect-square w-full overflow-hidden bg-white">
+      <div
+        className="relative aspect-square w-full overflow-hidden bg-white cursor-zoom-in"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseMove={handleMouseMove}
+      >
         <Image
           key={activeImage}
           src={activeImage}
           alt={alt}
           fill
           priority
-          className="object-cover"
+          className={cn(
+            "object-cover transition-transform duration-200 ease-out will-change-transform",
+            isZooming && "duration-75",
+          )}
+          style={{
+            transform: isZooming ? `scale(${ZOOM_SCALE})` : "scale(1)",
+            transformOrigin: `${origin.x}% ${origin.y}%`,
+          }}
           sizes="(max-width: 1024px) 100vw, 50vw"
+          draggable={false}
         />
         {discount > 0 ? (
-          <span className="font-heading absolute top-3 left-3 bg-primary px-2.5 py-1 text-[11px] font-semibold tracking-wide text-primary-foreground uppercase">
+          <span className="font-heading pointer-events-none absolute top-3 left-3 z-10 bg-primary px-2.5 py-1 text-[11px] font-semibold tracking-wide text-primary-foreground uppercase">
             OFF {discount}%
           </span>
         ) : null}

@@ -53,7 +53,7 @@ export function NavMobile({ tone = "default" }: NavMobileProps) {
           <Link
             href="/"
             onClick={closeMobileMenu}
-            className="font-heading text-3xl font-medium tracking-[0.12em] text-foreground"
+            className="font-brand text-3xl font-medium tracking-[0.12em] text-foreground"
           >
             ICONIVE
           </Link>

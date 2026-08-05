@@ -7,16 +7,41 @@ export type OrderTrackingStepKey =
   | "shipped"
   | "received";
 
+export interface OrderItemAddon {
+  name?: string;
+  value?: string;
+  price?: number | string;
+}
+
+export interface OrderItemVariant {
+  label?: string;
+  name?: string;
+  value?: string;
+}
+
 export interface OrderItem {
   _id: string;
-  product?: string;
+  product?: string | Record<string, unknown>;
   name?: string;
   description?: string;
   price?: number;
   quantity?: number;
+  amount?: number;
   status?: string;
   image?: string;
   photo?: string;
+  category?: string | { _id?: string; name?: string };
+  categoryName?: string;
+  subCategory?: string | { _id?: string; name?: string };
+  subCategoryName?: string;
+  subcategory?: string | { _id?: string; name?: string };
+  color?: string | { _id?: string; name?: string; label?: string; photo?: string };
+  length?: string;
+  density?: string;
+  size?: string;
+  addons?: OrderItemAddon[];
+  addOns?: OrderItemAddon[];
+  variants?: OrderItemVariant[];
   [key: string]: unknown;
 }
 

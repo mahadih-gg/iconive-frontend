@@ -95,26 +95,33 @@ export function MakeRefundDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto rounded-none border-primary-dark/20 bg-[#fffcf8] sm:max-w-md">
+      <DialogContent className="max-h-[90vh] overflow-x-hidden overflow-y-auto rounded-none border-primary-dark/20 bg-[#fffcf8] sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-heading">Make Refund</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="min-w-0 space-y-4 overflow-x-hidden"
+        >
+          <div className="min-w-0">
             <Label className={labelClassName}>Order</Label>
             <Select
               value={watch("orderId")}
               onValueChange={(value) => setValue("orderId", value)}
             >
-              <SelectTrigger className={cn(fieldClassName, "w-full")}>
+              <SelectTrigger
+                className={cn(fieldClassName, "w-full max-w-full min-w-0")}
+              >
                 <SelectValue placeholder="Select order" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper" className="w-[var(--radix-select-trigger-width)]">
                 {eligible.map((order) => (
                   <SelectItem key={order._id} value={order._id}>
-                    Invoice {formatInvoiceId(order._id)} —{" "}
-                    {order.orderItems?.[0]?.name ?? "Order"}
+                    <span className="line-clamp-1">
+                      Invoice {formatInvoiceId(order._id)} —{" "}
+                      {order.orderItems?.[0]?.name ?? "Order"}
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -131,16 +138,18 @@ export function MakeRefundDialog({
             )}
           </div>
 
-          <div>
+          <div className="min-w-0">
             <Label className={labelClassName}>Reason</Label>
             <Select
               value={watch("reason")}
               onValueChange={(value) => setValue("reason", value)}
             >
-              <SelectTrigger className={cn(fieldClassName, "w-full")}>
+              <SelectTrigger
+                className={cn(fieldClassName, "w-full max-w-full min-w-0")}
+              >
                 <SelectValue placeholder="Select reason" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper" className="w-[var(--radix-select-trigger-width)]">
                 {REASONS.map((reason) => (
                   <SelectItem key={reason} value={reason}>
                     {reason}

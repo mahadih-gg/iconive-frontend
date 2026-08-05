@@ -27,7 +27,7 @@ export function AdminSidebar() {
       <SidebarHeader className="border-b border-sidebar-border px-2 py-3">
         <Link
           href="/admin"
-          className="flex items-center gap-2 px-2 font-heading text-base font-semibold tracking-tight"
+          className="flex items-center gap-2 px-2 font-brand text-base font-semibold tracking-tight"
         >
           <span className="flex size-8 items-center justify-center bg-primary text-sm text-primary-foreground">
             I

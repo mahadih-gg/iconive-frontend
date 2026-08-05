@@ -92,7 +92,7 @@ export function Footer() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(3,0.8fr)] lg:gap-8 xl:gap-12">
           <div>
             <Link href="/" className="inline-block">
-              <h3 className="font-heading text-2xl font-semibold tracking-[0.08em] text-white">
+              <h3 className="font-brand text-2xl font-semibold tracking-[0.08em] text-white">
                 ICONIVE
               </h3>
             </Link>

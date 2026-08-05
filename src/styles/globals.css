@@ -10,7 +10,8 @@
 
 @theme inline {
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-josefin-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-raleway), ui-sans-serif, system-ui, sans-serif;
+  --font-brand: var(--font-josefin-sans), ui-sans-serif, system-ui, sans-serif;
   --animate-marquee: marquee var(--duration) infinite linear;
   --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -270,6 +271,59 @@
   @media (prefers-reduced-motion: reduce) {
     .hero-scroll-chevron {
       animation: none;
+    }
+  }
+
+  /* App route loading — brand mark + soft motion */
+  .loading-brand {
+    animation: loading-breathe 2.4s ease-in-out infinite;
+  }
+
+  .loading-ring {
+    animation: loading-spin 1.1s linear infinite;
+  }
+
+  .loading-brand-text {
+    animation: loading-fade 2.4s ease-in-out infinite;
+  }
+
+  @keyframes loading-breathe {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.045);
+    }
+  }
+
+  @keyframes loading-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes loading-fade {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .loading-brand,
+    .loading-ring,
+    .loading-brand-text {
+      animation: none;
+    }
+
+    .loading-brand-text {
+      opacity: 0.85;
     }
   }
 

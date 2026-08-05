@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Josefin_Sans, Poppins } from "next/font/google";
+import { Josefin_Sans, Poppins, Raleway } from "next/font/google";
 
 import { Providers } from "@/app/providers";
 
@@ -9,6 +9,13 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-poppins",
+  display: "swap",
+});
+
+const raleway = Raleway({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-raleway",
   display: "swap",
 });
 
@@ -31,7 +38,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${poppins.variable} ${josefinSans.variable}`}>
+    <html
+      lang="en"
+      className={`${poppins.variable} ${raleway.variable} ${josefinSans.variable}`}
+    >
       <body className="min-h-screen bg-background font-sans antialiased">
         <Providers>{children}</Providers>
       </body>

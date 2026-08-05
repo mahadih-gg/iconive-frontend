@@ -8,6 +8,13 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
@@ -27,6 +34,23 @@ const fieldClassName =
 const labelClassName =
   "font-heading mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-primary-dark uppercase";
 
+const GENDER_OPTIONS = [
+  "Male",
+  "Female",
+  "Other",
+  "Prefer not to say",
+] as const;
+
+const NONE_GENDER = "__none__";
+
+function normalizeGender(value?: string) {
+  if (!value?.trim()) return "";
+  const match = GENDER_OPTIONS.find(
+    (option) => option.toLowerCase() === value.trim().toLowerCase(),
+  );
+  return match ?? "";
+}
+
 export function ProfileView() {
   const { user } = useAuth();
   const { profile, updateProfile, isUpdating } = useProfile();
@@ -35,6 +59,8 @@ export function ProfileView() {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors, isDirty },
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -48,6 +74,8 @@ export function ProfileView() {
     },
   });
 
+  const gender = watch("gender");
+
   useEffect(() => {
     const data = profile ?? user;
     if (data) {
@@ -57,7 +85,7 @@ export function ProfileView() {
         phone: data.phone ?? "",
         address: data.address ?? "",
         dateOfBirth: data.dateOfBirth ?? "",
-        gender: data.gender ?? "",
+        gender: normalizeGender(data.gender),
       });
     }
   }, [profile, user, reset]);
@@ -124,11 +152,27 @@ export function ProfileView() {
 
             <div>
               <p className={labelClassName}>Gender</p>
-              <Input
-                placeholder="Optional"
-                className={fieldClassName}
-                {...register("gender")}
-              />
+              <Select
+                value={gender || NONE_GENDER}
+                onValueChange={(value) =>
+                  setValue("gender", value === NONE_GENDER ? "" : value, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
+              >
+                <SelectTrigger className={cn(fieldClassName, "w-full")}>
+                  <SelectValue placeholder="Select gender" />
+                </SelectTrigger>
+                <SelectContent className="rounded-none">
+                  <SelectItem value={NONE_GENDER}>Select gender</SelectItem>
+                  {GENDER_OPTIONS.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>

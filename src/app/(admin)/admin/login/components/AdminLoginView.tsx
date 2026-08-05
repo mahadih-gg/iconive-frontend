@@ -47,7 +47,7 @@ export function AdminLoginView() {
     <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
       <div className="w-full max-w-md border border-border bg-background p-6 shadow-sm sm:p-8">
         <div className="mb-6 flex flex-col gap-2">
-          <p className="font-heading text-2xl font-semibold tracking-tight">
+          <p className="font-brand text-2xl font-semibold tracking-tight">
             Iconive Admin
           </p>
           <p className="text-sm text-muted-foreground">
